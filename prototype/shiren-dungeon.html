@@ -1,0 +1,1225 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>小さな不思議の迷宮</title>
+<style>
+:root{color-scheme:dark;--bg:#101914;--panel:#19251e;--line:#344537;--text:#eee9d7;--muted:#a6b2a2;--accent:#dfbf78}*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#283b2c,var(--bg) 65%);color:var(--text);font:15px system-ui,-apple-system,sans-serif;min-height:100svh}main{max-width:1000px;margin:auto;padding:30px 24px}header{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:22px}.eyebrow{font-size:11px;letter-spacing:.22em;color:var(--accent);margin-bottom:7px}h1{font-family:serif;font-size:29px;letter-spacing:.08em;margin:0}.floor{border:1px solid var(--line);border-radius:12px;padding:10px 19px;text-align:center;background:#17251d;white-space:nowrap}.floor small{display:block;color:var(--muted);font-size:10px;letter-spacing:.12em}.floor strong{font:26px Georgia,serif}.layout{display:grid;grid-template-columns:minmax(0,1fr) 230px;gap:18px}.game{border:1px solid var(--line);border-radius:15px;overflow:hidden;background:#0b120e;box-shadow:0 14px 50px #0004}.toolbar{display:flex;justify-content:space-between;align-items:center;padding:11px 15px;border-bottom:1px solid var(--line);gap:10px;font-size:12px;color:var(--muted)}button{font:inherit;color:var(--text);background:#26392b;border:1px solid #4a604c;border-radius:8px;cursor:pointer;touch-action:manipulation}button:hover{background:#344b38}button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}button:disabled{opacity:.38;cursor:default}.toolbar button{padding:6px 10px;font-size:12px}canvas{display:block;width:100%;image-rendering:pixelated}#view{aspect-ratio:25/19}.status{height:65px;padding:12px 15px;background:#19251e;border-top:1px solid var(--line);font-size:13px;line-height:20px;color:#ddcfaa;overflow-y:auto;overflow-wrap:anywhere;scrollbar-gutter:stable}aside{display:flex;flex-direction:column;gap:14px}.card{background:#19251ed9;border:1px solid var(--line);border-radius:13px;padding:16px}.label{font-size:11px;color:var(--muted);letter-spacing:.14em;margin:0 0 12px}#mini{background:#0b120e;border-radius:5px;aspect-ratio:80/46}.legend{display:flex;gap:13px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin-top:10px}.dot{display:inline-block;width:8px;height:8px;margin-right:4px;background:#75c5b5}.dot.stair{background:#e5c477}.pad{display:grid;grid-template-columns:repeat(3,48px);grid-template-rows:repeat(3,42px);gap:5px;justify-content:center}.pad button{font-size:19px;user-select:none;touch-action:none}.pad .center{font-size:11px;color:var(--muted);display:grid;place-items:center}.primary{width:100%;padding:11px;margin-top:12px;background:#d8b56a;color:#182319;border-color:#d8b56a;font-weight:700}.primary:hover{background:#e9c980}.secondary{width:100%;padding:9px;font-size:12px;margin-top:9px;background:transparent}.help{font-size:12px;line-height:1.8;color:var(--muted);margin:12px 0 0}footer{font-size:11px;line-height:1.8;color:#81947f;margin-top:18px}kbd{font:11px monospace;color:#d0d9c6}.stats{font-size:12px;color:var(--muted);line-height:1.9}.stats b{color:var(--text);font-weight:500}@media(max-width:700px){main{padding:17px 12px}header{margin-bottom:16px}h1{font-size:23px}.layout{grid-template-columns:1fr;gap:12px}aside{display:grid;grid-template-columns:1fr 1fr;gap:10px}.card{padding:12px}.map-card{display:flex;flex-direction:column;justify-content:center}.info-card{grid-column:1/-1}.info-card .label{margin-bottom:4px}.pad{grid-template-columns:repeat(3,42px);grid-template-rows:repeat(3,36px);gap:4px}.help{font-size:11px;margin-top:8px}.toolbar{padding:9px 12px}footer{margin-top:12px}}
+</style>
+<style>
+.vitals{display:flex;align-items:center;gap:12px;padding:10px 15px;background:#15221a;border-bottom:1px solid var(--line);font-size:12px}.vitals strong{color:#b6e1bd}.hp-track{height:7px;flex:1;background:#344537;border-radius:9px;overflow:hidden}.hp-fill{height:100%;background:#82bc83;transition:width .15s}.turn-count{font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--muted)}.viewport{position:relative}.overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#0b120ed9;text-align:center;padding:20px}.overlay[hidden]{display:none}.overlay h2{font-family:serif;letter-spacing:.1em;font-size:25px;margin:0 0 12px}.overlay p{font-size:13px;color:var(--muted);line-height:1.8}.overlay .primary{min-width:180px}.dot.enemy{background:#da8074}.wait-button{width:100%;padding:8px;margin-top:8px;font-size:12px}.pad .attack-button{font-size:12px;color:#ebce97;background:#483a27;border-color:#7b6744}.battle-log{font-size:12px;line-height:1.8;min-height:58px;color:#d4c5a3;margin-top:10px}.battle-log p{margin:0}.legend{gap:9px}.info-card .label{margin-bottom:6px}.enemy-help{color:#bfcdba}.hp-low{color:#ef8f81!important}@media(max-width:700px){.vitals{padding:9px 12px;gap:8px;font-size:11px}.help{line-height:1.6}.primary{margin-top:8px;padding:9px}.wait-button{padding:7px}.card.control-card{padding:10px}.battle-log{min-height:40px}.overlay h2{font-size:22px}}
+</style>
+<style>.card{min-width:0}canvas{max-width:100%}@media(max-width:360px){.pad{grid-template-columns:repeat(3,37px);grid-template-rows:repeat(3,35px)}.help{font-size:10px}}</style>
+<style>
+.progression{display:flex;align-items:center;gap:12px;padding:9px 15px;background:#19251e;border-bottom:1px solid var(--line);font-size:12px;font-variant-numeric:tabular-nums}.level-badge{white-space:nowrap;color:var(--accent)}.level-badge strong{font-size:16px}.exp-track{height:5px;flex:1;min-width:30px;background:#344537;border-radius:9px;overflow:hidden}.exp-fill{height:100%;width:0;background:var(--accent);transition:width .2s}.exp-text{white-space:nowrap;color:var(--muted)}@media(max-width:700px){.progression{padding:8px 12px;gap:8px;font-size:11px}.level-badge strong{font-size:15px}}
+</style>
+<style>
+.dot.armored{background:#8fb9d0}.dot.swift{background:#ecc278}.enemy-guide{list-style:none;margin:0;padding:0;font-size:11px;line-height:1.65;color:var(--muted)}.enemy-guide li+li{margin-top:10px;padding-top:9px;border-top:1px solid var(--line)}.enemy-guide strong{color:var(--text);font-weight:600}.enemy-guide small{display:block;margin-left:12px;font-size:11px}.enemy-guide .pause-note{font-size:10px;color:#91a9b8;margin:10px 0 0}@media(max-width:700px){.enemy-card{grid-column:1/-1}.enemy-guide{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.enemy-guide li+li{margin:0;padding:0;border:0}.enemy-guide small{margin-left:0}.enemy-guide .pause-note{grid-column:1/-1;margin:0}}
+</style>
+<style>
+.enemy-pool-note,.enemy-note{font-size:11px;line-height:1.7;color:var(--muted);margin:0 0 12px}.enemy-note{margin:12px 0 0}.monster-table{border-top:1px solid var(--line);margin-top:12px;padding-top:12px;font-size:11px;line-height:1.7}.monster-table summary{cursor:pointer;color:var(--accent)}.monster-table-row{padding:9px 0;border-bottom:1px solid var(--line);color:var(--muted)}.monster-table-row.current{color:#f0dfac}.monster-table-row b{display:block;font-weight:600}.poison-status{font-size:10px;color:#d8b3ec;white-space:nowrap}.hp-track{min-width:15px}@media(max-width:700px){.enemy-guide{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+<style>
+.audio-controls{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:9px 15px;border-bottom:1px solid var(--line);background:#17241c;font-size:11px;color:var(--muted)}
+.audio-controls button{padding:6px 10px;font-size:11px;min-width:88px;white-space:nowrap}
+.audio-controls button[aria-pressed="true"]{color:#ead49d;border-color:#7a7751;background:#303b28}
+.audio-volume{display:flex;align-items:center;gap:5px;min-width:0}.audio-volume input{width:75px;min-width:45px;accent-color:var(--accent);cursor:pointer;margin:0;touch-action:pan-y}.audio-volume output{min-width:29px;font-variant-numeric:tabular-nums;text-align:right}.audio-hint{margin-left:auto;font-size:10px}
+@media(max-width:700px){.audio-controls{padding:8px 12px;gap:8px}.audio-volume{gap:4px}.audio-volume input{width:56px}.audio-hint{flex-basis:100%;margin-left:0}.audio-controls button{min-width:82px}}
+</style>
+<style>
+.dot.herb{background:#8ac66b}.inventory-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}.inventory-top .label{margin:0}.inventory-capacity{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}.herb-entry{display:flex;align-items:center;gap:9px;font-size:14px}.herb-icon{width:27px;height:27px;display:grid;place-items:center;border:1px solid #69865a;border-radius:7px;background:#2b3e29;color:#acd18c;font-size:20px}.herb-entry strong{color:#c3e4aa}.herb-description,.herb-feet{font-size:11px;color:var(--muted);line-height:1.7;margin:8px 0}.herb-feet{height:38px;overflow-y:auto;overflow-wrap:anywhere;scrollbar-gutter:stable}.inventory-open{overflow:hidden}.menu-button{width:100%;padding:10px;margin-top:8px;border-color:#aa935c;color:#efdba9;background:#34402d;font-weight:600}.item-menu{width:min(520px,calc(100vw - 28px));max-height:calc(100svh - 32px);margin:auto;padding:0;border:2px solid #baa374;border-radius:12px;background:#16251f;color:var(--text);font:inherit;box-shadow:0 22px 80px #0009}.item-menu[open]{display:flex;flex-direction:column}.item-menu::backdrop{background:#020905b8}.menu-header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 18px 12px;border-bottom:1px solid #586047}.menu-header h2{font-family:serif;font-size:24px;letter-spacing:.12em;margin:0 0 4px}.menu-header .eyebrow{font-size:9px;margin-bottom:4px}.menu-close{padding:8px 12px;font-size:12px;flex-shrink:0}.menu-health{display:flex;justify-content:space-between;gap:12px;padding:10px 18px;color:#c8d2bb;font-size:12px}.menu-health small{font-size:10px;color:var(--muted)}.menu-body{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;padding:0 14px 14px;min-height:0;overflow-y:auto}.item-menu.has-actions .menu-body{grid-template-columns:minmax(0,1fr) 164px}.menu-list{display:flex;flex-direction:column;gap:5px;max-height:min(42svh,300px);overflow-y:auto;padding:3px;scrollbar-gutter:stable}.menu-row{display:flex;align-items:center;gap:9px;min-height:45px;width:100%;padding:8px 10px;background:#1b2b22;border:1px solid #354937;text-align:left;font-size:14px}.menu-row.selected{border-color:#d3bb7d;background:#3a4530;color:#f5e6c0}.menu-cursor{color:transparent;font-size:12px;flex-shrink:0}.selected .menu-cursor{color:#e8ca84}.menu-slot{color:#a4ae99;font-size:11px;font-variant-numeric:tabular-nums}.menu-row .herb-icon{width:23px;height:23px;font-size:18px;flex-shrink:0}.menu-empty{margin:0;padding:18px 12px;color:var(--muted);font-size:13px;line-height:1.7}.menu-foot{margin-top:10px;font-size:12px;min-height:43px}.menu-actions{align-self:start;padding:12px;background:#101c15;border:1px solid #586047;border-radius:8px}.menu-actions[hidden]{display:none}.menu-actions h3{font-family:serif;font-size:17px;letter-spacing:.06em;margin:0 0 8px}.menu-description{font-size:11px;color:#b5c0ac;line-height:1.7;min-height:58px;margin:0 0 10px;overflow-wrap:anywhere}.menu-action{width:100%;min-height:42px;padding:9px;margin-top:6px;text-align:left;font-size:13px}.menu-action.selected{border-color:#d3bb7d;background:#3a4530}.menu-action.drink{color:#d8efbe}.menu-hint{padding:10px 18px;border-top:1px solid #586047;color:var(--muted);font-size:11px;line-height:1.7;flex-shrink:0}.menu-hint kbd{font-size:10px}@media(max-width:700px){.inventory-card{grid-column:1/-1}}@media(max-width:440px){.item-menu.has-actions .menu-body{grid-template-columns:minmax(0,1fr)}.item-menu.has-actions .menu-list{max-height:24svh}.menu-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;padding:10px}.menu-actions h3,.menu-description{grid-column:1/-1}.menu-description{min-height:0;margin-bottom:0}.menu-action{margin-top:0}.menu-actions #menuBack{grid-column:1/-1;text-align:center}.menu-health{gap:8px;padding:10px 14px}.menu-health small{font-size:9px}.menu-header{padding:13px 14px 10px}}
+</style>
+</head>
+<body><main>
+<header><div><div class="eyebrow">A LITTLE MYSTERY DUNGEON</div><h1>小さな不思議の迷宮</h1></div><div class="floor"><small>現在の階層</small><strong id="floor">1</strong> F</div></header>
+<div class="layout"><section class="game" aria-label="ダンジョン"><div class="toolbar"><span id="mode">探索中 · 探索済みの場所にいる敵が見えます</span><button id="mapToggle" aria-pressed="false">全体を見る</button></div><div class="audio-controls" aria-label="音の設定"><button id="soundToggle" type="button" aria-pressed="false">♪ 音をON</button><label class="audio-volume" for="bgmVolume">BGM<input id="bgmVolume" type="range" min="0" max="100" step="1" value="40" aria-label="BGMの音量"><output id="bgmValue" for="bgmVolume">40%</output></label><label class="audio-volume" for="seVolume">SE<input id="seVolume" type="range" min="0" max="100" step="1" value="65" aria-label="効果音の音量"><output id="seValue" for="seVolume">65%</output></label><span id="audioHint" class="audio-hint">起動時に再生</span></div><div class="progression"><span class="level-badge">Lv. <strong id="levelText">1</strong></span><div class="exp-track" id="expBar" role="progressbar" aria-label="次のレベルに必要な経験値" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0"><div class="exp-fill" id="expFill"></div></div><span class="exp-text" id="expText">EXP 0 / 10</span></div><div class="vitals"><span>HP <strong id="hpText">15 / 15</strong></span><span id="poisonStatus" class="poison-status" hidden></span><div class="hp-track" role="progressbar" aria-label="HP" aria-valuemin="0" aria-valuemax="15" aria-valuenow="15" id="hpBar"><div class="hp-fill" id="hpFill"></div></div><span class="turn-count" id="turnText">この階 0 ターン</span></div><div class="viewport"><canvas id="view" width="600" height="456" aria-label="キャラクター、敵、薬草、階段のあるダンジョン"></canvas><div id="death" class="overlay" hidden><div><h2>冒険はここまで</h2><p id="deathSummary"></p><button class="primary" id="restart">もう一度挑戦する</button></div></div></div><div id="status" class="status" role="status" aria-live="polite">敵のいる方向を向き、「攻撃」ボタンで攻撃します。</div></section>
+<aside><section class="card map-card"><p class="label">探索マップ</p><canvas id="mini" width="480" height="276" aria-label="探索済みの範囲と敵・薬草の地図"></canvas><div class="legend"><span><i class="dot"></i>あなた</span><span><i class="dot enemy"></i>敵（種類別の色）</span><span><i class="dot stair"></i>階段</span><span><i class="dot herb"></i>薬草</span></div></section>
+<section class="card control-card"><p class="label">移動・攻撃</p><div class="pad" aria-label="移動と攻撃ボタン"><button data-dx="-1" data-dy="-1" aria-label="左上">↖</button><button data-dx="0" data-dy="-1" aria-label="上">↑</button><button data-dx="1" data-dy="-1" aria-label="右上">↗</button><button data-dx="-1" data-dy="0" aria-label="左">←</button><button class="attack-button" id="attack" aria-label="向いている方向に攻撃">攻撃</button><button data-dx="1" data-dy="0" aria-label="右">→</button><button data-dx="-1" data-dy="1" aria-label="左下">↙</button><button data-dx="0" data-dy="1" aria-label="下">↓</button><button data-dx="1" data-dy="1" aria-label="右下">↘</button></div><button class="wait-button" id="wait">足踏み · 1ターン待つ</button><button class="menu-button" id="openInventory" type="button" aria-haspopup="dialog" aria-controls="inventoryMenu" aria-expanded="false">持ち物を開く</button><button class="primary" id="descend" disabled>階段を降りる</button><p class="help"><kbd>矢印 / WASD</kbd>：移動・向きを変える<br><kbd>Q E Z C</kbd>：斜め移動<br>画面の「攻撃」：攻撃<br><kbd>Space / .</kbd>：足踏み<br><kbd>Shift＋方向</kbd>：向きだけ変える<br><kbd>Enter</kbd>：階段を降りる<br><kbd>I</kbd>：持ち物メニュー</p></section>
+<section class="card inventory-card" aria-label="持ち物の状況"><div class="inventory-top"><p class="label">持ち物</p><span id="inventoryCount" class="inventory-capacity">0 / 20枠</span></div><div class="herb-entry"><span class="herb-icon" aria-hidden="true">♧</span><span>薬草 × <strong id="herbCount">0</strong></span></div><p class="herb-description">「持ち物を開く」から薬草を選んで使えます。</p><p id="herbFeet" class="herb-feet">薬草のマスへ移動すると自動で拾います。</p></section>
+<section class="card enemy-card"><p class="label" id="enemyGuideTitle">この階の出現候補</p><p class="enemy-pool-note" id="enemyPoolNote"></p><ul class="enemy-guide" id="enemyGuide"></ul><p class="enemy-note">左の点の数が敵のLvです。「Ⅱ」は休み、「Z」は休眠。盾の矢印は正面、赤い射線は溜め撃ち、橙の射線は突進の予告です。金色の枠と＋数値は戦鼓による強化。死亡地点の数字は、ぼうれい武者の出現までの残りターンです。</p><details class="monster-table"><summary>階層別の出現テーブル · 全58種類・自然出現43種類</summary><div id="monsterTable"></div></details><details class="monster-table"><summary>全58種類のモンスターデータ</summary><div id="monsterData"></div></details></section>
+<section class="card info-card"><p class="label">今回の冒険</p><div class="stats" id="stats"></div><div class="battle-log" id="battleLog" aria-label="直近の出来事"></div><button class="secondary" id="regenerate">最初からやり直す</button></section></aside></div>
+<footer>薬草は各階の部屋に2個配置され、最初の1個は開始した部屋にあります。薬草のマスへ移動すると、その移動ターンで自動的に拾い、長押し移動を止めます。持ち物は20枠、薬草1個で1枠。満杯のときは薬草を床に残します。「持ち物を開く」から薬草を1個選び、「飲む」でHPを20回復し、その後に敵が行動します。メニューを開くと長押し移動を止め、開閉や選択中にはターンが進みません。矢印キーで選び、Enterで決定、Escapeで戻れます。Iキーでも持ち物メニューを開閉できます。HP満タン・薬草を持っていない場合には消費しません。選んだ薬草の「置く」、メニュー下部の「足元」からの「拾う」も、成功すると1ターン進みます。持ち物は次の階へ引き継ぎ、やり直すと空になります。<br>BGMは画面起動時に再生します。ブラウザーが自動再生を制限する場合は、画面をタップするか「音をON」で開始します。BGM・SEの音量は個別に調整でき、音の設定は保存されます。別のタブや画面へ移ると一時停止します。曲と効果音はこのデモ用のオリジナルです。<br>風来のシレンの部屋・通路・ターン制を参考にした簡易デモです。地形とキャラクターは独自のものです。<br>敵は同じ部屋とその入口、または壁を挟まず隣接するプレイヤーを発見します。敵が入口、プレイヤーが部屋の中にいる場合も発見します。追跡では目的地の方向を優先し、その左右45度の方向も試します。見失うと最後に見た場所へ向かいます。5回連続で移動できないと目的地を解除して徘徊に戻ります。<br>徘徊中、部屋では入口以外の出口を優先して選びます。通路では前・左斜め前・右斜め前・左・右の順に進路を探し、行き止まりでは戻ります。<br>方向ボタン・移動キーを長押しすると、長押し判定後は次のマスへ続けて移動します。指やキーを離すと、そのマスまで移動して止まります。ダメージを受けると長押し移動を中断し、移動ボタンやキーを押し直すまで自動では進みません。壁や敵に阻まれた移動ではターンが進みません。攻撃は「攻撃」ボタンで行います。<br>同じ階で30ターン経過するごとに、空いている部屋のマスへ敵が1体現れます。追加された敵は次のターンから行動します。階段を降りると経過ターンのカウントは0に戻ります。敵の数に上限はなく、配置できる空きマスがない場合は増えません。<br>敵は19系統とぼうれい武者の全58種類。1〜30Fの自然出現は43種類。敵のLvは1〜3で、系統ごとに名前・能力が変わります。1〜30Fの出現表を使い、31F以降は29〜30Fの候補を継続します。最初の6体・30ターンごとの追加出現・呼び笛による召喚は、現在の階の出現候補から等確率で抽選します。呼び笛の小鬼はプレイヤーに隣接しているときのみ、25％で隣接する空きマスに1体召喚し、回数制限はありません。召喚に成功するとその行動を終了します。<br>駆け足の獣は毎ターン2回行動し、攻撃は1回まで。疾風の獣と迅雷の獣は毎ターン2回行動し、攻撃も2回までです。1歩目で隣接した場合は残りの行動で攻撃でき、2歩目で隣接した場合は次のターンに攻撃します。<br>盾甲虫・重盾甲虫は矢印の正面と左右斜めの3方向からのダメージを半減し、城塞甲虫は1/4にします（端数切り上げ）。それ以外の5方向は全Lvで2倍になります。弓射ち・大弓射ちは8方向の直線上を射撃し、壁・他の敵で射線が遮られます。魔導士系の通常攻撃はLv順に6・10・14、溜め撃ちは20・28・36ダメージ、射程4・5・6マスです。<br>ゼリー系は攻撃を受けて生き残ると25％で親と同じLvの通常個体を1体生みます。分裂は各個体2回まで。子も通常のHP・経験値・分裂能力を持ちます。倒されたときや隣に空きマスがない場合は分裂しません。召喚・分裂した個体は次のプレイヤーのターンから行動します。<br>壁抜けの影系は上下左右に壁を通れますが、攻撃するには床へ出る必要があります。突進猪系は橙の射線を予告し、次のターンに同じ方向へ直進します。石像系は近づくか攻撃すると覚醒し、覚醒したターンは攻撃・移動をしません。<br>牙獣系は等速で通常攻撃が強く、斧猿系は通常攻撃のたびに10％で痛恨の一撃（ダメージ2倍）を出します。槍兵系は上下左右2マス以内を攻撃し、壁や他の敵で遮られます。<br>戦鼓系は同じ部屋の2マス以内にいる、自分以外の敵の通常攻撃をLv順に＋3・＋5・＋8にします。複数いる場合は最大の補正だけを使い、離れるか戦鼓が倒れると解除します。溜め撃ち・突進の威力には加算せず、痛恨は強化後の通常攻撃を2倍にします。<br>投石モグラ系は8方向の直線上を射程3・4・5マスで攻撃し、隣接されると後退を優先します。後退したターンには攻撃せず、後退できない場合は通常攻撃します。<br>鬼面武者・はんにゃ武者・将軍を倒すと、撃破ターンの次から4ターン後に、死亡地点へぼうれい武者が1体現れます。死亡地点が他のキャラクターで埋まっている場合は、空くまで待ちます。ぼうれいは出現ターンには行動せず、主人公を攻撃しません。他の敵へ移動して憑依すると、その敵を同系統の上位種へ1段階変化させて消えます。対象はLv1・Lv2、上限Lv3です。強化された敵はHPが全回復し、そのターンの残り行動を打ち切ります。ぼうれいを倒しても再復活しません。階段を降りると復活待ちは解除されます。<br>敵を倒すと種類に応じた累積経験値を獲得します。Lv2は累積10、Lv3は30、Lv4は60、Lv5は100など、SFC版の経験値表を使用し、上限はLv70です。初期HPは15。レベルアップで最大HPが3・攻撃力が1増え、現在HPも3回復します。レベルと累積経験値は次の階へ引き継ぎ、やり直すとLv1に戻ります。<br>毒は受けた次のターンから終了時にダメージを受けます。毒キノコは3ターン×1、猛毒キノコは4ターン×1、瘴気キノコは5ターン×2ダメージです。毒を受け直すと最新の毒の期間・威力で更新します。階段を降りても毒は引き継ぎます。<br>ターン終了時、生存していれば最大HPの1％ずつ自然回復します。1HP未満の分は持ち越し、最大HP50なら2ターンで1HP、100なら毎ターン1HP回復します。敵の攻撃や毒を受けたターンも回復します。端数は次の階にも引き継ぎ、HPが満タンになると0に戻ります。通常のダメージは攻撃力と同じ固定値です。一度探索した場所は明るいままになり、そこにいる敵は探索マップにも表示されます。未探索の場所は隠れたままで、次の階では探索範囲がリセットされます。「全体を見る」は時間を進めず、地形と敵の配置を表示します。</footer>
+</main>
+<dialog id="inventoryMenu" class="item-menu" aria-labelledby="menuTitle" aria-describedby="menuHint">
+ <div class="menu-header"><div><div class="eyebrow">ADVENTURE MENU</div><h2 id="menuTitle">持ち物</h2><span id="menuCapacity" class="inventory-capacity">0 / 20枠</span></div><button id="menuClose" class="menu-close" type="button">閉じる</button></div>
+ <div class="menu-health"><span id="menuHealth">HP 15 / 15</span><small>選択中はターンが進みません</small></div>
+ <div class="menu-body"><div><div id="menuList" class="menu-list" aria-label="持ち物一覧"></div><p id="menuEmpty" class="menu-empty">持ち物はまだありません。<br>床の薬草を拾うと、ここに並びます。</p><button id="menuFoot" class="menu-row menu-foot" type="button" disabled><span class="menu-cursor" aria-hidden="true">▶</span><span id="menuFootText">足元：何もありません</span></button></div>
+ <section id="menuActions" class="menu-actions" aria-label="選んだアイテムの操作" hidden><h3 id="menuItemTitle">薬草</h3><p id="menuDescription" class="menu-description">HPを20回復します。</p><button id="drinkHerb" class="menu-action drink" type="button" disabled>飲む</button><button id="putDownHerb" class="menu-action" type="button" disabled>置く</button><button id="pickUpHerb" class="menu-action" type="button" hidden disabled>拾う</button><button id="menuBack" class="menu-action" type="button">一覧に戻る</button></section></div>
+ <div id="menuHint" class="menu-hint"><kbd>↑ ↓</kbd> 選択 · <kbd>Enter</kbd> 決定 · <kbd>Esc</kbd> 戻る<br>開閉・選択は0ターン。飲む・置く・拾うは1ターンです。</div>
+</dialog>
+<script>
+"use strict";
+const COLS=6,ROWS=4,CW=13,CH=11,W=COLS*CW+2,H=ROWS*CH+2;
+// A border corridor occupies one margin tile; keep another wall tile beside rooms.
+const ROOM_MARGIN=2;
+const DIRECTIONS=[[0,-1],[1,-1],[1,0],[1,1],[0,1],[-1,1],[-1,0],[-1,-1]];
+const PLAYER_MAX_HP=15,PLAYER_ATTACK=5,ENEMY_HP=12,ENEMY_ATTACK=2,ENEMY_COUNT=6;
+const ENEMY_SPAWN_INTERVAL=30;
+const HERBS_PER_FLOOR=2,HERB_RECOVERY=20,INVENTORY_CAPACITY=20;
+const MOVE_DURATION=120;
+const HOLD_DELAY=240;
+const LEVEL_GROWTH={maxHp:3,attack:1};
+const MAX_LEVEL=70;
+// Total experience needed to reach each level (index 0 is unused).
+const EXPERIENCE_THRESHOLDS=[null,0,10,30,60,100,150,230,350,500,700,950,1200,1500,1800,2300,2800,3500,4200,5000,6000,7000,8000,10000,13000,16000,20000,25000,30000,36000,42000,48000,54000,60000,70000,80000,90000,100000,115000,130000,145000,160000,175000,200000,230000,260000,290000,320000,350000,380000,410000,440000,470000,500000,530000,560000,590000,620000,650000,680000,710000,740000,770000,800000,830000,860000,890000,920000,950000,980000,999999];
+const ENEMY_TYPES={
+ "normal":{"name":"通常の敵","family":"ogre","tier":1,"hp":12,"attack":2,"exp":5,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#e48b7c","sprite":"ogre","elite":false,"description":"毎ターン1回行動"},
+ "brute":{"name":"剛腕の鬼","family":"ogre","tier":2,"hp":22,"attack":5,"exp":10,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#cb697c","sprite":"ogre","elite":true,"description":"毎ターン1回行動"},
+ "ogre3":{"name":"鬼将","family":"ogre","tier":3,"hp":60,"attack":20,"exp":45,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#b24859","sprite":"ogre","elite":true,"description":"毎ターン1回行動"},
+ "armored":{"name":"重装兵","family":"armor","tier":1,"hp":24,"attack":7,"exp":10,"moveSteps":1,"maxAttacks":1,"actionInterval":2,"color":"#8fb9d0","sprite":"soldier","elite":false,"description":"2ターンに1回行動・一撃が重い"},
+ "iron":{"name":"鉄甲兵","family":"armor","tier":2,"hp":38,"attack":15,"exp":18,"moveSteps":1,"maxAttacks":1,"actionInterval":2,"color":"#b1b9d5","sprite":"soldier","elite":true,"description":"2ターンに1回行動・一撃が重い"},
+ "armor3":{"name":"金剛兵","family":"armor","tier":3,"hp":66,"attack":25,"exp":45,"moveSteps":1,"maxAttacks":1,"actionInterval":2,"color":"#ddd4a2","sprite":"soldier","elite":true,"description":"2ターンに1回行動・一撃が重い"},
+ "swift":{"name":"駆け足の獣","family":"beast","tier":1,"hp":8,"attack":2,"exp":3,"moveSteps":2,"maxAttacks":1,"actionInterval":1,"color":"#ecc278","sprite":"beast","elite":false,"description":"毎ターン2回行動・攻撃は最大1回"},
+ "gale":{"name":"疾風の獣","family":"beast","tier":2,"hp":28,"attack":5,"exp":18,"moveSteps":2,"maxAttacks":2,"actionInterval":1,"color":"#7ad4bf","sprite":"beast","elite":true,"description":"毎ターン2回行動・攻撃は最大2回"},
+ "swift3":{"name":"迅雷の獣","family":"beast","tier":3,"hp":46,"attack":8,"exp":35,"moveSteps":2,"maxAttacks":2,"actionInterval":1,"color":"#97a7ef","sprite":"beast","elite":true,"description":"毎ターン2回行動・攻撃は最大2回"},
+ "archer":{"name":"弓射ち","family":"bow","tier":1,"hp":14,"attack":4,"exp":8,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#91bd73","sprite":"archer","elite":false,"range":3,"rangedDirections":8,"description":"8方向の直線上・射程3マス"},
+ "greatArcher":{"name":"大弓射ち","family":"bow","tier":2,"hp":24,"attack":6,"exp":14,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#d4be78","sprite":"archer","elite":true,"range":5,"rangedDirections":8,"description":"8方向の直線上・射程5マス"},
+ "archer3":{"name":"狙撃弓射ち","family":"bow","tier":3,"hp":40,"attack":10,"exp":30,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#d88b77","sprite":"archer","elite":true,"range":7,"rangedDirections":8,"description":"8方向の直線上・射程7マス"},
+ "poison":{"name":"毒キノコ","family":"poison","tier":1,"hp":16,"attack":2,"exp":8,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#b997d9","sprite":"mushroom","elite":false,"poison":3,"poisonDamage":1,"description":"隣接攻撃で毒3ターン・毎ターン1ダメージ"},
+ "poison2":{"name":"猛毒キノコ","family":"poison","tier":2,"hp":28,"attack":4,"exp":16,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#9273ce","sprite":"mushroom","elite":false,"poison":4,"poisonDamage":1,"description":"隣接攻撃で毒4ターン・毎ターン1ダメージ"},
+ "poison3":{"name":"瘴気キノコ","family":"poison","tier":3,"hp":44,"attack":7,"exp":32,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#75519f","sprite":"mushroom","elite":true,"poison":5,"poisonDamage":2,"description":"隣接攻撃で毒5ターン・毎ターン2ダメージ"},
+ "caller":{"name":"呼び笛の小鬼","family":"caller","tier":1,"hp":16,"attack":2,"exp":10,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#e5aa74","sprite":"caller","elite":false,"summonChance":0.25,"description":"隣接時25％で同階の候補を1体召喚・回数制限なし"},
+ "caller2":{"name":"号令の小鬼","family":"caller","tier":2,"hp":28,"attack":5,"exp":20,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#d9825c","sprite":"caller","elite":false,"summonChance":0.25,"description":"隣接時25％で同階の候補を1体召喚・回数制限なし"},
+ "caller3":{"name":"軍師の小鬼","family":"caller","tier":3,"hp":42,"attack":8,"exp":38,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#b55b69","sprite":"caller","elite":true,"summonChance":0.25,"description":"隣接時25％で同階の候補を1体召喚・回数制限なし"},
+ "shield":{"name":"盾甲虫","family":"shield","tier":1,"hp":24,"attack":6,"exp":12,"moveSteps":1,"maxAttacks":1,"actionInterval":2,"color":"#90b697","sprite":"beetle","elite":false,"shield":true,"frontMultiplier":0.5,"backMultiplier":2,"description":"正面3方向の被ダメージ半減・他5方向は2倍・2ターンに1回行動"},
+ "shield2":{"name":"重盾甲虫","family":"shield","tier":2,"hp":42,"attack":11,"exp":24,"moveSteps":1,"maxAttacks":1,"actionInterval":2,"color":"#789fc0","sprite":"beetle","elite":false,"shield":true,"frontMultiplier":0.5,"backMultiplier":2,"description":"正面3方向の被ダメージ半減・他5方向は2倍・2ターンに1回行動"},
+ "shield3":{"name":"城塞甲虫","family":"shield","tier":3,"hp":68,"attack":18,"exp":48,"moveSteps":1,"maxAttacks":1,"actionInterval":2,"color":"#b2a1c9","sprite":"beetle","elite":true,"shield":true,"frontMultiplier":0.25,"backMultiplier":2,"description":"正面3方向の被ダメージ1/4・他5方向は2倍・2ターンに1回行動"},
+ "mage":{"name":"溜め撃ちの魔導士","family":"mage","tier":1,"hp":18,"attack":6,"exp":14,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#d191c8","sprite":"mage","elite":false,"range":4,"rangedDirections":4,"rangedAttack":20,"chargeAttack":true,"description":"予告の次ターンに上下左右へ溜め撃ち・射程4マス"},
+ "mage2":{"name":"灼熱の魔導士","family":"mage","tier":2,"hp":30,"attack":10,"exp":28,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#ce825d","sprite":"mage","elite":false,"range":5,"rangedDirections":4,"rangedAttack":28,"chargeAttack":true,"description":"予告の次ターンに上下左右へ溜め撃ち・射程5マス"},
+ "mage3":{"name":"滅火の魔導士","family":"mage","tier":3,"hp":48,"attack":14,"exp":55,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#ad5969","sprite":"mage","elite":true,"range":6,"rangedDirections":4,"rangedAttack":36,"chargeAttack":true,"description":"予告の次ターンに上下左右へ溜め撃ち・射程6マス"},
+ "bat":{"name":"吸血コウモリ","family":"bat","tier":1,"hp":22,"attack":6,"exp":14,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#c88e9d","sprite":"bat","elite":false,"drain":true,"description":"与えた実HPダメージ分、自分のHPを回復"},
+ "bat2":{"name":"夜牙のコウモリ","family":"bat","tier":2,"hp":32,"attack":9,"exp":26,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#9b7cb0","sprite":"bat","elite":false,"drain":true,"description":"与えた実HPダメージ分、自分のHPを回復"},
+ "bat3":{"name":"紅翼のコウモリ","family":"bat","tier":3,"hp":46,"attack":12,"exp":45,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#c6607e","sprite":"bat","elite":true,"drain":true,"description":"与えた実HPダメージ分、自分のHPを回復"},
+ "slime":{"name":"分裂ゼリー","family":"slime","tier":1,"hp":24,"attack":4,"exp":12,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#80bdd7","sprite":"slime","elite":false,"split":true,"splitChance":0.25,"splitLimit":2,"description":"被弾して生存すると25％で同じLvの通常個体を1体生む・各個体2回まで"},
+ "slime2":{"name":"増殖ゼリー","family":"slime","tier":2,"hp":38,"attack":7,"exp":24,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#65bba7","sprite":"slime","elite":false,"split":true,"splitChance":0.25,"splitLimit":2,"description":"被弾して生存すると25％で同じLvの通常個体を1体生む・各個体2回まで"},
+ "slime3":{"name":"巨塊ゼリー","family":"slime","tier":3,"hp":54,"attack":10,"exp":42,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#7588d0","sprite":"slime","elite":true,"split":true,"splitChance":0.25,"splitLimit":2,"description":"被弾して生存すると25％で同じLvの通常個体を1体生む・各個体2回まで"},
+ "wallShade":{"name":"壁抜けの影","family":"ghost","tier":1,"hp":14,"attack":4,"exp":9,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#a4d5c5","sprite":"ghost","elite":false,"wallWalk":true,"moveDirections":4,"description":"上下左右に壁を抜ける・床に出てから攻撃"},
+ "wallWraith":{"name":"壁抜けの幽鬼","family":"ghost","tier":2,"hp":26,"attack":8,"exp":20,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#83b5d2","sprite":"ghost","elite":false,"wallWalk":true,"moveDirections":4,"description":"上下左右に壁を抜ける・床に出てから攻撃"},
+ "wallRevenant":{"name":"壁抜けの怨霊","family":"ghost","tier":3,"hp":40,"attack":12,"exp":38,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#a48fcf","sprite":"ghost","elite":true,"wallWalk":true,"moveDirections":4,"description":"上下左右に壁を抜ける・床に出てから攻撃"},
+ "charger":{"name":"突進猪","family":"boar","tier":1,"hp":24,"attack":5,"exp":12,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#bd936a","sprite":"boar","elite":false,"dashAttack":true,"dashDamage":10,"dashRange":3,"rangedDirections":8,"description":"予告の次ターンに直進して突進・最大3マス・壁や敵で停止"},
+ "charger2":{"name":"猛進猪","family":"boar","tier":2,"hp":40,"attack":9,"exp":26,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#a8795c","sprite":"boar","elite":false,"dashAttack":true,"dashDamage":18,"dashRange":4,"rangedDirections":8,"description":"予告の次ターンに直進して突進・最大4マス・壁や敵で停止"},
+ "charger3":{"name":"暴走猪","family":"boar","tier":3,"hp":62,"attack":13,"exp":48,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#975965","sprite":"boar","elite":true,"dashAttack":true,"dashDamage":26,"dashRange":5,"rangedDirections":8,"description":"予告の次ターンに直進して突進・最大5マス・壁や敵で停止"},
+ "sentinel":{"name":"眠る石像","family":"statue","tier":1,"hp":28,"attack":8,"exp":14,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#b4b3a6","sprite":"statue","elite":false,"sleeper":true,"wakeRange":2,"description":"休眠から経路2マス以内か被弾で覚醒・覚醒ターンは攻撃しない"},
+ "sentinel2":{"name":"眠る巨像","family":"statue","tier":2,"hp":44,"attack":13,"exp":28,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#9baaaa","sprite":"statue","elite":false,"sleeper":true,"wakeRange":3,"description":"休眠から経路3マス以内か被弾で覚醒・覚醒ターンは攻撃しない"},
+ "sentinel3":{"name":"眠る守護像","family":"statue","tier":3,"hp":68,"attack":19,"exp":55,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#bbc0d1","sprite":"statue","elite":true,"sleeper":true,"wakeRange":4,"description":"休眠から経路4マス以内か被弾で覚醒・覚醒ターンは攻撃しない"},
+ "fang1":{"name":"牙獣","family":"fang","tier":1,"hp":18,"attack":6,"exp":10,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#d7b58a","sprite":"fang","elite":false,"description":"毎ターン1回行動・通常攻撃が強い"},
+ "fang2":{"name":"大牙獣","family":"fang","tier":2,"hp":35,"attack":14,"exp":24,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#cf9770","sprite":"fang","elite":false,"description":"毎ターン1回行動・通常攻撃が強い"},
+ "fang3":{"name":"王牙獣","family":"fang","tier":3,"hp":60,"attack":24,"exp":50,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#bd715a","sprite":"fang","elite":true,"description":"毎ターン1回行動・通常攻撃が強い"},
+ "axe1":{"name":"斧猿","family":"axe","tier":1,"hp":30,"attack":10,"exp":18,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#c58e6c","sprite":"axe","elite":false,"criticalChance":0.1,"criticalMultiplier":2,"description":"通常攻撃の10％で痛恨・ダメージ2倍"},
+ "axe2":{"name":"大斧猿","family":"axe","tier":2,"hp":55,"attack":22,"exp":40,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#a86758","sprite":"axe","elite":false,"criticalChance":0.1,"criticalMultiplier":2,"description":"通常攻撃の10％で痛恨・ダメージ2倍"},
+ "axe3":{"name":"斧猿王","family":"axe","tier":3,"hp":90,"attack":35,"exp":80,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#86495d","sprite":"axe","elite":true,"criticalChance":0.1,"criticalMultiplier":2,"description":"通常攻撃の10％で痛恨・ダメージ2倍"},
+ "spear1":{"name":"槍兵","family":"spear","tier":1,"hp":22,"attack":7,"exp":14,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#94b8b5","sprite":"pikeman","elite":false,"range":2,"rangedDirections":4,"cardinalAttack":true,"spearReach":true,"description":"上下左右の2マス以内へ槍攻撃・壁と敵で遮断"},
+ "spear2":{"name":"長槍兵","family":"spear","tier":2,"hp":40,"attack":14,"exp":32,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#709db2","sprite":"pikeman","elite":false,"range":2,"rangedDirections":4,"cardinalAttack":true,"spearReach":true,"description":"上下左右の2マス以内へ槍攻撃・壁と敵で遮断"},
+ "spear3":{"name":"槍将","family":"spear","tier":3,"hp":65,"attack":22,"exp":65,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#8c88c3","sprite":"pikeman","elite":true,"range":2,"rangedDirections":4,"cardinalAttack":true,"spearReach":true,"description":"上下左右の2マス以内へ槍攻撃・壁と敵で遮断"},
+ "drum1":{"name":"戦鼓の小鬼","family":"drum","tier":1,"hp":18,"attack":3,"exp":12,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#d6a56d","sprite":"drummer","elite":false,"auraRange":2,"description":"同じ部屋の2マス以内にいる他の敵の通常攻撃を強化＋3・重複時は最大値のみ","auraBonus":3},
+ "drum2":{"name":"戦鼓の鬼","family":"drum","tier":2,"hp":32,"attack":6,"exp":28,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#cf865d","sprite":"drummer","elite":false,"auraRange":2,"description":"同じ部屋の2マス以内にいる他の敵の通常攻撃を強化＋5・重複時は最大値のみ","auraBonus":5},
+ "drum3":{"name":"戦鼓の鬼将","family":"drum","tier":3,"hp":48,"attack":10,"exp":55,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#b56769","sprite":"drummer","elite":true,"auraRange":2,"description":"同じ部屋の2マス以内にいる他の敵の通常攻撃を強化＋8・重複時は最大値のみ","auraBonus":8},
+ "mole1":{"name":"投石モグラ","family":"mole","tier":1,"hp":16,"attack":5,"exp":12,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#b89d84","sprite":"mole","elite":false,"rangedDirections":8,"retreat":true,"stoneThrow":true,"description":"8方向の直線上へ投石・隣接時は後退を優先・射程3マス","range":3},
+ "mole2":{"name":"岩投げモグラ","family":"mole","tier":2,"hp":30,"attack":11,"exp":28,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#9b8172","sprite":"mole","elite":false,"rangedDirections":8,"retreat":true,"stoneThrow":true,"description":"8方向の直線上へ投石・隣接時は後退を優先・射程4マス","range":4},
+ "mole3":{"name":"巨岩モグラ","family":"mole","tier":3,"hp":48,"attack":18,"exp":55,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#82677b","sprite":"mole","elite":true,"rangedDirections":8,"retreat":true,"stoneThrow":true,"description":"8方向の直線上へ投石・隣接時は後退を優先・射程5マス","range":5},
+ "samurai1":{"name":"鬼面武者","family":"samurai","tier":1,"hp":20,"attack":5,"exp":15,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#c49b78","sprite":"samurai","elite":false,"spiritDelay":4,"description":"倒すと4ターン後にぼうれい武者・死亡地点にカウント表示"},
+ "samurai2":{"name":"はんにゃ武者","family":"samurai","tier":2,"hp":38,"attack":11,"exp":35,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#ac7a6c","sprite":"samurai","elite":false,"spiritDelay":4,"description":"倒すと4ターン後にぼうれい武者・死亡地点にカウント表示"},
+ "samurai3":{"name":"将軍","family":"samurai","tier":3,"hp":60,"attack":18,"exp":70,"moveSteps":1,"maxAttacks":1,"actionInterval":1,"color":"#8c697f","sprite":"samurai","elite":true,"spiritDelay":4,"description":"倒すと4ターン後にぼうれい武者・死亡地点にカウント表示"},
+ "spirit":{"name":"ぼうれい武者","family":"spirit","tier":1,"hp":4,"attack":0,"exp":5,"moveSteps":1,"maxAttacks":0,"actionInterval":1,"color":"#d5dfcf","sprite":"spirit","elite":false,"spirit":true,"description":"武者系の撃破後のみ出現・敵へ憑依してLv＋1・主人公には攻撃しない"}
+};
+const ENEMY_TYPE_IDS=Object.keys(ENEMY_TYPES);
+const ENEMY_UPGRADES=Object.fromEntries(ENEMY_TYPE_IDS.map(type=>[type,ENEMY_TYPE_IDS.find(next=>ENEMY_TYPES[next].family===ENEMY_TYPES[type].family&&ENEMY_TYPES[next].tier===ENEMY_TYPES[type].tier+1)]));
+const MONSTER_TABLE=[{"from":1,"to":2,"types":["normal","swift"]},{"from":3,"to":4,"types":["brute","armored","archer","poison"]},{"from":5,"to":6,"types":["fang1","samurai1","armored","archer","poison","charger"]},{"from":7,"to":8,"types":["fang1","samurai1","wallShade","shield","spear1","mole1"]},{"from":9,"to":10,"types":["axe1","iron","sentinel","spear1","wallShade","mole1"]},{"from":11,"to":13,"types":["axe1","gale","drum1","caller","greatArcher","slime","charger"]},{"from":14,"to":16,"types":["fang2","samurai2","poison2","bat","mage","greatArcher","iron"]},{"from":17,"to":19,"types":["fang2","spear2","mole2","shield2","caller2","wallWraith","slime2","sentinel2"]},{"from":20,"to":23,"types":["ogre3","gale","drum2","bat2","mage2","charger2","spear2"]},{"from":24,"to":26,"types":["axe2","samurai3","drum2","mole2","mage2","wallWraith","slime2"]},{"from":27,"to":28,"types":["axe2","ogre3","armor3","swift3","sentinel3","bat2","greatArcher","caller2"]},{"from":29,"to":30,"types":["axe2","ogre3","armor3","swift3","samurai3","charger2","drum2","mage2"]}];
+// Continue beyond 30F using the final 29–30F pool.
+function floorMonsters(floor=floorNumber){return MONSTER_TABLE.find(row=>floor>=row.from&&floor<=row.to)||MONSTER_TABLE.at(-1);}
+function randomMonsterType(){const pool=floorMonsters().types;return pool[Math.floor(gameRandom()*pool.length)];}
+const $=id=>document.getElementById(id),canvas=$("view"),ctx=canvas.getContext("2d"),mini=$("mini"),mctx=mini.getContext("2d");
+let state,floorNumber=1,wholeMap=false,heldTimer=null,heldInput=null,gameRandom;
+let movement=null,movementFrame=null,turnPaths=null;
+const inventoryMenu={open:false,stage:"list",selection:0,itemIndex:null,action:0,returnFocus:null};
+// Original synth music and effects. Audio randomness never consumes the dungeon RNG.
+const MUSIC_BARS=[
+ {chord:[50,57,62,65],melody:[74,0,77,81,0,79,77,0]},
+ {chord:[46,53,58,62],melody:[72,0,74,77,0,74,72,69]},
+ {chord:[43,50,58,62],melody:[70,0,74,77,0,74,67,69]},
+ {chord:[45,52,57,61],melody:[73,0,76,81,0,79,76,0]},
+ {chord:[50,57,62,65],melody:[74,77,0,79,81,0,77,74]},
+ {chord:[41,48,57,60],melody:[72,0,77,79,0,77,72,69]},
+ {chord:[48,55,60,64],melody:[76,0,79,84,0,79,76,72]},
+ {chord:[45,52,57,61],melody:[73,76,0,69,0,73,76,0]},
+ {chord:[50,57,62,65],melody:[81,0,79,77,74,0,77,0]},
+ {chord:[46,53,58,62],melody:[77,0,74,72,70,0,72,74]},
+ {chord:[43,50,58,62],melody:[79,0,77,74,70,0,74,0]},
+ {chord:[45,52,57,61],melody:[76,0,73,69,73,0,76,0]},
+ {chord:[50,57,62,65],melody:[74,0,77,79,81,0,79,77]},
+ {chord:[46,53,58,62],melody:[74,0,72,70,74,0,77,0]},
+ {chord:[43,50,58,62],melody:[79,0,77,74,70,0,69,0]},
+ {chord:[45,52,57,61],melody:[73,0,76,0,69,0,73,0]}
+];
+class DungeonAudio{
+ constructor(){
+  this.ctx=null;this.enabled=true;this.started=false;this.failed=false;this.active=true;
+  this.bgmVolume=40;this.seVolume=65;this.timer=null;this.step=0;this.nextNote=0;
+  this.voices=new Set();this.lastEffects=new Map();this.generation=0;this.pendingSuspend=null;
+  try{
+   const prefs=JSON.parse(localStorage.getItem("littleDungeonAudio")||"null");
+   if(prefs&&typeof prefs.enabled==="boolean")this.enabled=prefs.enabled;
+   for(const channel of ["bgm","se"])if(Number.isFinite(prefs?.[channel]))this[channel+"Volume"]=Math.max(0,Math.min(100,prefs[channel]));
+  }catch{}
+ }
+ save(){
+  try{localStorage.setItem("littleDungeonAudio",JSON.stringify({enabled:this.enabled,bgm:this.bgmVolume,se:this.seVolume}));}catch{}
+ }
+ updateControls(){
+  const running=this.enabled&&this.ctx?.state==="running"&&!document.hidden;
+  $("soundToggle").textContent=this.failed?"音声を利用できません":!this.enabled?"♪ 音 OFF":running?"♪ 音 ON":"♪ 音をON";
+  $("soundToggle").setAttribute("aria-pressed",String(running));
+  $("soundToggle").disabled=this.failed;
+  $("audioHint").textContent=this.failed?"音なしでプレイできます":!this.enabled?"ミュート中":document.hidden?"一時停止中":running?(this.active?"探索の調べ":"BGM停止中"):(this.started?"タップで音楽を再生":"起動時に再生");
+  for(const channel of ["bgm","se"]){
+   $(channel+"Volume").value=this[channel+"Volume"];
+   $(channel+"Value").textContent=this[channel+"Volume"]+"%";
+  }
+ }
+ init(){
+  const AudioClass=window.AudioContext||window.webkitAudioContext;
+  if(!AudioClass)throw new Error("Audio unavailable");
+  this.ctx=new AudioClass();
+  const c=this.ctx;
+  this.master=c.createGain();this.master.gain.value=.8;
+  this.compressor=c.createDynamicsCompressor();
+  this.compressor.threshold.value=-16;this.compressor.knee.value=18;this.compressor.ratio.value=4;
+  this.compressor.attack.value=.005;this.compressor.release.value=.16;
+  this.master.connect(this.compressor);this.compressor.connect(c.destination);
+  this.bgmGain=c.createGain();this.seGain=c.createGain();this.bgmGain.connect(this.master);this.seGain.connect(this.master);
+  this.musicInput=c.createGain();this.musicInput.connect(this.bgmGain);
+  const delay=c.createDelay(.5),feedback=c.createGain(),wet=c.createGain(),filter=c.createBiquadFilter();
+  delay.delayTime.value=.24;feedback.gain.value=.2;wet.gain.value=.15;
+  filter.type="lowpass";filter.frequency.value=2200;
+  this.musicInput.connect(delay);delay.connect(filter);filter.connect(wet);wet.connect(this.bgmGain);
+  filter.connect(feedback);feedback.connect(delay);
+  this.noiseBuffer=c.createBuffer(1,Math.ceil(c.sampleRate*.22),c.sampleRate);
+  const random=rng(0xB6A51),samples=this.noiseBuffer.getChannelData(0);
+  for(let i=0;i<samples.length;i++)samples[i]=random()*2-1;
+  c.onstatechange=()=>{if(c.state==="running")this.startMusic();else this.stopMusic();this.updateControls();};
+  this.applyVolumes();this.started=true;
+ }
+ applyVolumes(){
+  if(!this.ctx)return;
+  const t=this.ctx.currentTime;
+  for(const [node,value] of [[this.master,this.enabled?.8:0],[this.bgmGain,this.active?this.bgmVolume/100:0],[this.seGain,this.seVolume/100]]){
+   node.gain.cancelScheduledValues(t);node.gain.setTargetAtTime(value,t,.025);
+  }
+ }
+ async unlock(){
+  if(!this.enabled||this.failed||document.hidden)return false;
+  const generation=this.generation;
+  try{
+   if(!this.ctx)this.init();
+   if(this.pendingSuspend)await this.pendingSuspend;
+   if(generation!==this.generation||!this.enabled||document.hidden)return false;
+   if(this.ctx.state!=="running"){
+    this.updateControls();
+    // A blocked startup resume may stay pending; each later gesture must retry resume.
+    await this.ctx.resume();
+   }
+   if(generation!==this.generation||!this.enabled||document.hidden)return false;
+   this.applyVolumes();this.startMusic();this.updateControls();return this.ctx.state==="running";
+  }catch{
+   if(!this.started){this.failed=true;try{void this.ctx?.close().catch(()=>{});}catch{}this.ctx=null;}
+   this.updateControls();return false;
+  }
+ }
+ toggle(){
+  if(this.enabled&&this.started&&this.ctx?.state==="running"){
+   this.enabled=false;this.generation++;this.stopMusic();this.stopVoices();this.applyVolumes();this.updateControls();
+  }else{this.enabled=true;void this.unlock();}
+  this.save();
+ }
+ setVolume(channel,value){
+  if(!["bgm","se"].includes(channel))return;
+  const number=Number(value);if(!Number.isFinite(number))return;
+  this[channel+"Volume"]=Math.max(0,Math.min(100,number));this.applyVolumes();this.save();this.updateControls();
+  if(this.enabled)void this.unlock();
+ }
+ envelope(param,time,duration,volume,attack=.008){
+  param.setValueAtTime(0,time);
+  param.linearRampToValueAtTime(volume,time+attack);
+  param.exponentialRampToValueAtTime(.0001,time+duration);
+  param.linearRampToValueAtTime(0,time+duration+.025);
+ }
+ track(source,gain,filter,bus,time,duration){
+  const voice={source,gain,filter,bus};this.voices.add(voice);
+  source.onended=()=>{this.voices.delete(voice);source.disconnect();gain.disconnect();filter?.disconnect();};
+  source.start(time);source.stop(time+duration+.03);
+ }
+ tone(note,time,duration,volume,type="sine",bus="se",slide=null,pan=0){
+  const c=this.ctx,source=c.createOscillator(),gain=c.createGain(),filter=c.createBiquadFilter();
+  const frequency=440*2**((note-69)/12);
+  source.type=type;source.frequency.setValueAtTime(frequency,time);
+  if(slide!==null)source.frequency.exponentialRampToValueAtTime(440*2**((slide-69)/12),time+duration);
+  filter.type="lowpass";filter.frequency.value=bus==="bgm"?2400:4200;
+  this.envelope(gain.gain,time,duration,volume,bus==="bgm"?.018:.006);
+  source.connect(filter);filter.connect(gain);
+  if(c.createStereoPanner&&pan){
+   const panner=c.createStereoPanner();panner.pan.value=pan;gain.connect(panner);panner.connect(bus==="bgm"?this.musicInput:this.seGain);
+   this.track(source,gain,filter,bus,time,duration);const ended=source.onended;source.onended=()=>{ended();panner.disconnect();};
+  }else{gain.connect(bus==="bgm"?this.musicInput:this.seGain);this.track(source,gain,filter,bus,time,duration);}
+ }
+ noise(time,duration,volume,frequency=1500,bus="se"){
+  const c=this.ctx,source=c.createBufferSource(),gain=c.createGain(),filter=c.createBiquadFilter();
+  source.buffer=this.noiseBuffer;filter.type="bandpass";filter.frequency.value=frequency;filter.Q.value=.7;
+  this.envelope(gain.gain,time,duration,volume);
+  source.connect(filter);filter.connect(gain);gain.connect(bus==="bgm"?this.musicInput:this.seGain);
+  this.track(source,gain,filter,bus,time,duration);
+ }
+ scheduleStep(step,time){
+  const bar=MUSIC_BARS[Math.floor(step/8)%MUSIC_BARS.length],beat=step%8,eighth=60/92/2;
+  const melody=bar.melody[beat];
+  if(melody){
+   this.tone(melody,time,eighth*1.25,.115,"triangle","bgm",null,.12);
+   this.tone(melody+12,time,eighth,.012,"sine","bgm",null,-.12);
+  }
+  if(beat%2===0){
+   this.tone(bar.chord[[0,2,1,3][beat/2]]+12,time+.025,eighth*1.5,.052,"sine","bgm",null,-.22);
+  }
+  if(beat===0||beat===4){
+   this.tone(bar.chord[0]-(beat===4?0:12),time,eighth*1.9,.11,"triangle","bgm");
+   this.tone(38,time,.09,.045,"sine","bgm",26);
+  }
+  if(beat===2||beat===6)this.noise(time,.055,.018,2500,"bgm");
+ }
+ startMusic(){
+  if(this.timer!==null||!this.enabled||!this.active||document.hidden||this.ctx?.state!=="running")return;
+  this.nextNote=this.ctx.currentTime+.04;
+  const pump=()=>{
+   this.timer=null;
+   if(!this.enabled||!this.active||document.hidden||this.ctx.state!=="running")return;
+   try{
+    const now=this.ctx.currentTime,eighth=60/92/2;
+    if(this.nextNote<now-.1)this.nextNote=now+.025;
+    while(this.nextNote<now+.16){
+     this.scheduleStep(this.step,this.nextNote);this.step=(this.step+1)%(MUSIC_BARS.length*8);this.nextNote+=eighth;
+    }
+    this.timer=setTimeout(pump,80);
+   }catch{this.stopMusic();this.failed=true;this.updateControls();}
+  };
+  pump();
+ }
+ stopVoices(bus=null){
+  if(!this.ctx)return;const t=this.ctx.currentTime;
+  for(const voice of this.voices)if(!bus||voice.bus===bus){
+   voice.gain.gain.cancelScheduledValues(t);voice.gain.gain.setTargetAtTime(0,t,.008);
+   try{voice.source.stop(t+.04);}catch{}
+  }
+ }
+ stopMusic(){
+  clearTimeout(this.timer);this.timer=null;this.stopVoices("bgm");
+ }
+ setScene(active){
+  this.active=active;
+  if(!active){this.stopMusic();this.step=0;}
+  this.applyVolumes();if(active)this.startMusic();this.updateControls();
+ }
+ pause(){
+  this.generation++;this.stopMusic();this.stopVoices();
+  if(this.ctx&&this.ctx.state!=="closed"&&!this.pendingSuspend){
+   const pending=this.ctx.suspend().catch(()=>{}).finally(()=>{if(this.pendingSuspend===pending)this.pendingSuspend=null;});this.pendingSuspend=pending;
+  }
+  this.updateControls();
+ }
+ play(effect){
+  if(!this.ctx||!this.enabled||this.failed||document.hidden||this.seVolume===0)return;
+  const t=this.ctx.currentTime+.015,last=this.lastEffects.get(effect);
+  if(last!==undefined&&t-last<.055)return;
+  this.lastEffects.set(effect,t);
+  try{
+   const tone=(n,dt,d,v=.2,type="sine",slide=null)=>this.tone(n,t+dt,d,v,type,"se",slide);
+   const noise=(dt,d,v,f)=>this.noise(t+dt,d,v,f);
+   switch(effect){
+    case "step":noise(0,.03,.055,650);tone(43,0,.045,.065,"sine",37);break;
+    case "blocked":tone(47,0,.07,.09,"triangle",41);break;
+    case "attack":noise(0,.08,.16,2100);tone(83,0,.085,.1,"triangle",61);break;
+    case "hit":tone(48,0,.09,.24,"triangle",34);noise(0,.055,.2,1000);break;
+    case "kill":tone(74,0,.14,.17,"triangle");tone(81,.07,.2,.15);break;
+    case "hurt":tone(39,0,.12,.25,"triangle",28);noise(0,.08,.18,500);break;
+    case "poison":tone(63,0,.1,.09,"sine",56);tone(58,.07,.11,.08);break;
+    case "levelUp":[74,77,79,81,84,86].forEach((n,i)=>tone(n,i*.075,.24,.15,"triangle"));break;
+    case "stairs":[62,69,74,77,81].forEach((n,i)=>tone(n,i*.07,.3,.13));break;
+    case "summon":[81,79,74].forEach((n,i)=>tone(n,i*.085,.16,.14,"triangle"));break;
+    case "split":[62,69,74].forEach((n,i)=>tone(n,i*.055,.085,.13,"sine",n+7));break;
+    case "charge":tone(45,0,.25,.11,"triangle",57);tone(69,.18,.18,.12);break;
+    case "shoot":noise(0,.045,.11,3200);tone(88,0,.085,.11,"sine",71);break;
+    case "death":[62,60,57,53,50].forEach((n,i)=>tone(n,.06+i*.18,.38,.14,"triangle"));break;
+    case "pickup":tone(74,0,.09,.1);tone(79,.05,.13,.1);break;
+    case "heal":[69,74,77].forEach((n,i)=>tone(n,i*.055,.19,.12));break;
+    case "confirm":tone(74,0,.075,.09);break;
+   }
+  }catch{this.failed=true;this.stopMusic();this.stopVoices();this.updateControls();}
+ }
+}
+const sound=new DungeonAudio();
+function bindSound(){
+ sound.updateControls();
+ $("soundToggle").addEventListener("click",()=>sound.toggle());
+ for(const channel of ["bgm","se"]){
+  $(channel+"Volume").addEventListener("input",event=>sound.setVolume(channel,event.target.value));
+  $(channel+"Volume").addEventListener("change",()=>{if(channel==="se")sound.play("confirm");});
+ }
+ // Start/resume on an actual play gesture; the audio controls manage their own gestures.
+ const wake=event=>{
+  if(event.target instanceof HTMLElement&&event.target.closest(".audio-controls"))return;
+  if(event.type==="keydown"){
+   const key=event.key.length===1?event.key.toLowerCase():event.key;
+   if(!keys[key]&&![" ",".","5","Enter","i"].includes(key))return;
+  }else if(event.type==="pointerdown"&&event.button!==0)return;
+  void sound.unlock();
+ };
+ document.addEventListener("pointerdown",wake,true);document.addEventListener("keydown",wake,true);
+ document.addEventListener("click",wake,true);
+ document.addEventListener("visibilitychange",()=>{if(document.hidden)sound.pause();else void sound.unlock();});
+ window.addEventListener("pagehide",()=>sound.pause());
+ window.addEventListener("pageshow",()=>{if(sound.started)void sound.unlock();});
+}
+
+// Grid coordinates decide turns; recorded paths only control the displayed positions.
+function beginMovement(){
+ turnPaths=new Map([state.player,...state.enemies].map(actor=>[actor,[{x:actor.x,y:actor.y}]]));
+}
+function recordStep(actor){turnPaths?.get(actor)?.push({x:actor.x,y:actor.y});}
+function displayedPosition(actor,now=performance.now()){
+ const path=movement?.paths.get(actor);if(!path)return actor;
+ const progress=Math.max(0,Math.min(1,(now-movement.started)/MOVE_DURATION));
+ const step=progress*(path.length-1),index=Math.min(Math.floor(step),path.length-2),a=path[index],b=path[index+1],t=step-index;
+ return {x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t};
+}
+function startMovement(started=performance.now()){
+ const paths=new Map([...turnPaths].filter(([,path])=>path.length>1));turnPaths=null;
+ if(!paths.size)return;
+ movement={paths,started};
+ const frame=now=>{
+  if(now-movement.started>=MOVE_DURATION){
+   // Carry the frame's fractional overshoot into the next step, avoiding a pause at each tile.
+   const nextStart=Math.max(movement.started+MOVE_DURATION,now-MOVE_DURATION/4);
+   movement=null;movementFrame=null;
+   if(performHeldStep(nextStart))return;
+   render();return;
+  }
+  drawScene(now);movementFrame=requestAnimationFrame(frame);
+ };
+ movementFrame=requestAnimationFrame(frame);
+}
+function cancelMovement(){
+ if(movementFrame!==null)cancelAnimationFrame(movementFrame);
+ movement=null;movementFrame=null;turnPaths=null;
+}
+function rng(seed){let a=seed>>>0;return()=>{a+=0x6D2B79F5;let t=a;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296;};}
+function generate(seed){
+ const random=rng(seed),ri=(a,b)=>a+Math.floor(random()*(b-a+1)),shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=ri(0,i);[a[i],a[j]]=[a[j],a[i]];}return a;};
+ const nodeCount=COLS*ROWS;
+ const tiles=new Uint8Array(W*H),roomAt=new Int16Array(W*H).fill(-1),rooms=[],nodes=[],edges=[],visited=new Set();
+ const neighbors=i=>{const a=[],x=i%COLS,y=Math.floor(i/COLS);if(x>0)a.push(i-1);if(x<COLS-1)a.push(i+1);if(y>0)a.push(i-COLS);if(y<ROWS-1)a.push(i+COLS);return a;};
+ function visit(i){visited.add(i);for(const j of shuffle(neighbors(i))){if(!visited.has(j)){edges.push([i,j]);visit(j);}}}visit(ri(0,nodeCount-1));
+ const possible=[];for(let i=0;i<nodeCount;i++)for(const j of neighbors(i))if(i<j&&!edges.some(([a,b])=>a===i&&b===j||a===j&&b===i))possible.push([i,j]);
+ edges.push(...shuffle(possible).slice(0,ri(4,8)));
+ const roomNodes=new Set(shuffle(Array.from({length:nodeCount},(_,i)=>i)).slice(0,ri(16,20)));
+ for(let i=0;i<nodeCount;i++){
+  const bx=1+(i%COLS)*CW,by=1+Math.floor(i/COLS)*CH;
+  if(roomNodes.has(i)){
+   const w=ri(5,9),h=ri(4,7),x=bx+ri(ROOM_MARGIN,CW-w-ROOM_MARGIN),y=by+ri(ROOM_MARGIN,CH-h-ROOM_MARGIN),id=rooms.length;
+   const r={x,y,w,h,cx:x+Math.floor(w/2),cy:y+Math.floor(h/2)};rooms.push(r);nodes.push({x:r.cx,y:r.cy});
+   for(let yy=y;yy<y+h;yy++)for(let xx=x;xx<x+w;xx++){tiles[yy*W+xx]=1;roomAt[yy*W+xx]=id;}
+  }else nodes.push({x:bx+ri(3,CW-4),y:by+ri(3,CH-4)});
+ }
+ const carve=(x1,y1,x2,y2)=>{let x=x1,y=y1;tiles[y*W+x]=1;while(x!==x2||y!==y2){if(x!==x2)x+=Math.sign(x2-x);else y+=Math.sign(y2-y);tiles[y*W+x]=1;}};
+ for(const [a,b] of edges){const p=nodes[a],q=nodes[b];if(Math.floor(a/COLS)===Math.floor(b/COLS)){const boundary=1+Math.max(a%COLS,b%COLS)*CW;carve(p.x,p.y,boundary,p.y);carve(boundary,p.y,boundary,q.y);carve(boundary,q.y,q.x,q.y);}else{const boundary=1+Math.max(Math.floor(a/COLS),Math.floor(b/COLS))*CH;carve(p.x,p.y,p.x,boundary);carve(p.x,boundary,q.x,boundary);carve(q.x,boundary,q.x,q.y);}}
+ const start=rooms[ri(0,rooms.length-1)],player={x:start.cx,y:start.cy},dist=new Int16Array(W*H).fill(-1),queue=[player.y*W+player.x];dist[queue[0]]=0;
+ for(let k=0;k<queue.length;k++){const t=queue[k],x=t%W,y=Math.floor(t/W);for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]){const xx=x+dx,yy=y+dy,n=yy*W+xx;if(xx>=0&&xx<W&&yy>=0&&yy<H&&tiles[n]&&dist[n]<0){dist[n]=dist[t]+1;queue.push(n);}}}
+ const candidates=rooms.filter(r=>dist[r.cy*W+r.cx]>=15);const goal=candidates.length?candidates[ri(0,candidates.length-1)]:rooms.reduce((a,b)=>dist[a.cy*W+a.cx]>dist[b.cy*W+b.cx]?a:b);
+ return {seed,tiles,roomAt,rooms,edges,player,stairs:{x:goal.cx,y:goal.cy},seen:new Uint8Array(W*H),moves:0};
+}
+
+function passable(x,y){return x>=0&&x<W&&y>=0&&y<H&&state.tiles[y*W+x]===1;}
+function terrainStep(x,y,dx,dy){return passable(x+dx,y+dy)&&(!(dx&&dy)||(passable(x+dx,y)&&passable(x,y+dy)));}
+function enemyAt(x,y,except=null){return state.enemies.find(e=>e!==except&&e.x===x&&e.y===y);}
+function shuffleGame(list){for(let i=list.length-1;i>0;i--){const j=Math.floor(gameRandom()*(i+1));[list[i],list[j]]=[list[j],list[i]];}return list;}
+
+// Eight-direction distances; walls block diagonal corner cutting for both sides.
+function distanceField(target,blocked=null,maxDistance=Infinity){
+ const dist=new Int16Array(W*H).fill(-1),start=target.y*W+target.x,queue=[start];dist[start]=0;
+ for(let k=0;k<queue.length;k++){
+  const i=queue[k],x=i%W,y=Math.floor(i/W);if(dist[i]>=maxDistance)continue;
+  for(const [dx,dy] of DIRECTIONS){if(!terrainStep(x,y,dx,dy))continue;const n=(y+dy)*W+x+dx;if(dist[n]>=0||blocked?.has(n))continue;dist[n]=dist[i]+1;queue.push(n);}
+ }
+ return dist;
+}
+function enemyType(enemy){return ENEMY_TYPES[enemy.type]||ENEMY_TYPES.normal;}
+function enemyName(enemy){return enemyType(enemy).name;}
+function drumBonusFor(enemy){
+ const room=state.roomAt[enemy.y*W+enemy.x];if(room<0||enemyType(enemy).spirit)return 0;
+ let bonus=0;
+ for(const source of state.enemies){
+  const spec=enemyType(source);
+  if(source===enemy||source.hp<=0||!spec.auraBonus||state.roomAt[source.y*W+source.x]!==room)continue;
+  if(Math.max(Math.abs(source.x-enemy.x),Math.abs(source.y-enemy.y))<=spec.auraRange)bonus=Math.max(bonus,spec.auraBonus);
+ }
+ return bonus;
+}
+function scheduleSpirit(enemy){
+ const spec=enemyType(enemy);if(!spec.spiritDelay)return;
+ // The killing action ends at turns+1; count four further consumed turns.
+ state.remains.push({x:enemy.x,y:enemy.y,sourceName:spec.name,readyTurn:state.turns+1+spec.spiritDelay});
+ record(`${spec.name}の倒れた場所に、${spec.spiritDelay}ターン後ぼうれい武者が現れます。`);
+}
+function spawnPendingSpirits(){
+ let count=0;
+ state.remains=state.remains.filter(remain=>{
+  if(state.turns<remain.readyTurn||enemyAt(remain.x,remain.y)||(state.player.x===remain.x&&state.player.y===remain.y)||!passable(remain.x,remain.y))return true;
+  state.enemies.push(makeEnemy({x:remain.x,y:remain.y},"spirit"));count++;
+  record(`${remain.sourceName}のぼうれい武者が現れました！`);return false;
+ });
+ return count;
+}
+function possessEnemy(spirit,host){
+ const next=ENEMY_UPGRADES[host.type];if(!next)return false;
+ const oldName=enemyName(host),spec=ENEMY_TYPES[next];
+ Object.assign(host,{type:next,hp:spec.hp,maxHp:spec.hp,bornTurn:state.turns,actionCooldown:spec.actionInterval-1,summonCount:0,splitCount:0,charge:null,asleep:!!spec.sleeper&&host.asleep,wakePending:false});
+ state.enemies=state.enemies.filter(e=>e!==spirit);
+ record(`ぼうれい武者が${oldName}に憑依！ ${spec.name}（Lv.${spec.tier}）になり、HPが全回復。`);
+ return true;
+}
+function moveSpirit(enemy){
+ // Find the nearest reachable host. Actors block the path; eligible hosts are terminal cells.
+ const start=enemy.y*W+enemy.x,playerCell=state.player.y*W+state.player.x;
+ const occupied=new Map(state.enemies.filter(e=>e!==enemy).map(e=>[e.y*W+e.x,e]));
+ const parent=new Int32Array(W*H).fill(-1),queue=[start];parent[start]=start;let goal=null;
+ search:for(let k=0;k<queue.length;k++){
+  const i=queue[k],x=i%W,y=Math.floor(i/W);
+  for(const [dx,dy] of DIRECTIONS){
+   if(!terrainStep(x,y,dx,dy))continue;
+   const n=(y+dy)*W+x+dx;if(n===playerCell||parent[n]>=0)continue;
+   const host=occupied.get(n);
+   if(host){if(ENEMY_UPGRADES[host.type]){parent[n]=i;goal=host;break search;}continue;}
+   parent[n]=i;queue.push(n);
+  }
+ }
+ if(!goal)return wanderEnemy(enemy);
+ let next=goal.y*W+goal.x;while(parent[next]!==start)next=parent[next];
+ if(next===goal.y*W+goal.x)return possessEnemy(enemy,goal);
+ return stepEnemy(enemy,[next%W-enemy.x,Math.floor(next/W)-enemy.y]);
+}
+function retreatEnemy(enemy){
+ const p=state.player,dx=Math.sign(enemy.x-p.x),dy=Math.sign(enemy.y-p.y),index=directionIndex(dx,dy);
+ if(index<0)return false;
+ const distance=Math.max(Math.abs(enemy.x-p.x),Math.abs(enemy.y-p.y));
+ const step=directionOptions(index,[0,-1,1,-2,2]).find(([x,y])=>canEnemyStep(enemy,[x,y])&&Math.max(Math.abs(enemy.x+x-p.x),Math.abs(enemy.y+y-p.y))>distance);
+ return stepEnemy(enemy,step);
+}
+function makeEnemy(cell,type="normal"){
+ const id=state.nextEnemyId++,spec=ENEMY_TYPES[type];
+ return {...cell,id,type,hp:spec.hp,maxHp:spec.hp,lastSeen:null,mode:spec.sleeper?"sleep":"wander",wanderTarget:null,entry:null,stuckTurns:0,actionCooldown:spec.actionInterval-1,facing:[0,1],bornTurn:state.turns,summonCount:0,splitCount:0,charge:null,asleep:!!spec.sleeper,wakePending:false};
+}
+function spawnEnemies(){
+ const p=state.player,distance=distanceField(p),occupied=new Set([p.y*W+p.x,state.stairs.y*W+state.stairs.x]),startRoom=state.roomAt[p.y*W+p.x];
+ const cells=[];for(let y=1;y<H-1;y++)for(let x=1;x<W-1;x++){const i=y*W+x;if(state.roomAt[i]>=0&&distance[i]>=3&&!occupied.has(i))cells.push({x,y});}
+ const nearby=shuffleGame(cells.filter(c=>state.roomAt[c.y*W+c.x]===startRoom&&distance[c.y*W+c.x]<=6));
+ const other=shuffleGame(cells.filter(c=>state.roomAt[c.y*W+c.x]!==startRoom));
+ const choices=nearby.length?[nearby[0],...other]:other;
+ if(choices.length<ENEMY_COUNT)choices.push(...shuffleGame(cells));
+ for(const c of choices){const i=c.y*W+c.x;if(occupied.has(i))continue;occupied.add(i);state.enemies.push(makeEnemy(c,randomMonsterType()));if(state.enemies.length===ENEMY_COUNT)break;}
+}
+function spawnAdditionalEnemy(){
+ if(state.dead)return false;
+ const p=state.player,distance=distanceField(p),occupied=new Set(state.enemies.map(e=>e.y*W+e.x));
+ occupied.add(p.y*W+p.x);occupied.add(state.stairs.y*W+state.stairs.x);
+ const cells=[],distant=[];
+ for(let y=1;y<H-1;y++)for(let x=1;x<W-1;x++){
+  const i=y*W+x;if(state.roomAt[i]<0||!passable(x,y)||distance[i]<0||occupied.has(i))continue;
+  const cell={x,y};cells.push(cell);if(distance[i]>=3)distant.push(cell);
+ }
+ const choices=distant.length?distant:cells;if(!choices.length)return false;
+ const cell=choices[Math.floor(gameRandom()*choices.length)],type=randomMonsterType();
+ state.enemies.push(makeEnemy(cell,type));return true;
+}
+function herbAt(x,y){return state.items.find(item=>item.type==="herb"&&item.x===x&&item.y===y);}
+function spawnHerbs(){
+ const p=state.player,startRoom=state.roomAt[p.y*W+p.x],distance=distanceField(p),cells=[];
+ for(let y=1;y<H-1;y++)for(let x=1;x<W-1;x++){
+  const i=y*W+x;if(state.roomAt[i]<0||distance[i]<1||enemyAt(x,y)||(state.stairs.x===x&&state.stairs.y===y))continue;
+  cells.push({x,y});
+ }
+ const near=cells.filter(c=>state.roomAt[c.y*W+c.x]===startRoom&&distance[c.y*W+c.x]<=3);
+ const firstPool=near.length?near:cells;if(!firstPool.length)return;
+ const first=firstPool[Math.floor(gameRandom()*firstPool.length)];
+ state.items.push({...first,id:state.nextItemId++,type:"herb"});
+ const other=cells.filter(c=>state.roomAt[c.y*W+c.x]!==startRoom);
+ const rest=shuffleGame((other.length?other:cells).filter(c=>c.x!==first.x||c.y!==first.y));
+ for(const cell of rest.slice(0,HERBS_PER_FLOOR-1))state.items.push({...cell,id:state.nextItemId++,type:"herb"});
+}
+function collectHerbAtPlayer(){
+ const p=state.player,item=herbAt(p.x,p.y);if(!item)return "";
+ stopHold();
+ if(state.inventory.length>=INVENTORY_CAPACITY)return "持ち物がいっぱいです。薬草は床に残っています。";
+ state.items=state.items.filter(other=>other!==item);state.inventory.push("herb");sound.play("pickup");
+ const message="薬草を拾いました。持ち物メニューで薬草を選んで飲むと、HPを20回復できます。";record(message);return message;
+}
+function drinkHerb(index=state.inventory.indexOf("herb")){
+ stopHold();if(state.dead||movement)return false;
+ const p=state.player;
+ if(!Number.isInteger(index)||index<0||state.inventory[index]!=="herb"){announce("薬草を持っていません。");return false;}
+ if(p.hp>=p.maxHp){announce("HPは満タンです。薬草はHPが減ったときに飲めます。");return false;}
+ closeInventoryMenu(false,false);
+ beginMovement();state.shots=[];state.inventory.splice(index,1);
+ const healed=Math.min(HERB_RECOVERY,p.maxHp-p.hp);p.hp+=healed;if(p.hp===p.maxHp)state.healRemainder=0;
+ state.effect={x:p.x,y:p.y,kind:"heal"};sound.play("heal");
+ const message=`薬草を飲んでHPが${healed}回復しました。`;record(message);finishTurn(message);return true;
+}
+function pickUpHerb(){
+ stopHold();if(state.dead||movement)return false;
+ const p=state.player;
+ if(!herbAt(p.x,p.y)){announce("足元に薬草はありません。");return false;}
+ if(state.inventory.length>=INVENTORY_CAPACITY){announce("持ち物がいっぱいです。先に薬草を飲むか置いてください。");return false;}
+ closeInventoryMenu(false,false);
+ beginMovement();state.effect=null;state.shots=[];finishTurn(collectHerbAtPlayer());return true;
+}
+function putDownHerb(index=state.inventory.indexOf("herb")){
+ stopHold();if(state.dead||movement)return false;
+ const p=state.player;
+ if(!Number.isInteger(index)||index<0||state.inventory[index]!=="herb"){announce("薬草を持っていません。");return false;}
+ if(herbAt(p.x,p.y)){announce("足元にはすでに薬草があります。");return false;}
+ closeInventoryMenu(false,false);
+ beginMovement();state.effect=null;state.shots=[];state.inventory.splice(index,1);
+ state.items.push({x:p.x,y:p.y,id:state.nextItemId++,type:"herb"});sound.play("confirm");
+ const message="薬草を足元に置きました。";record(message);finishTurn(message);return true;
+}
+function renderInventory(){
+ const count=state.inventory.filter(type=>type==="herb").length,p=state.player,atFeet=!!herbAt(p.x,p.y);
+ $("herbCount").textContent=count;$("inventoryCount").textContent=`${state.inventory.length} / ${INVENTORY_CAPACITY}枠`;
+ $("herbFeet").textContent=atFeet?"足元に薬草があります。":"薬草のマスへ移動すると自動で拾います。";
+ $("openInventory").disabled=state.dead;
+ if(inventoryMenu.open){if(state.dead)closeInventoryMenu(false,false);else renderInventoryMenu();}
+}
+function inventoryChoices(){
+ const choices=state.inventory.map((_,index)=>index);
+ if(herbAt(state.player.x,state.player.y))choices.push(state.inventory.length);
+ return choices;
+}
+function inventoryActionButtons(){
+ return [$("drinkHerb"),$("putDownHerb"),$("pickUpHerb"),$("menuBack")].filter(b=>!b.hidden&&!b.disabled);
+}
+function focusInventoryChoice(){
+ const target=inventoryMenu.selection===state.inventory.length?$("menuFoot"):$("menuList").children[inventoryMenu.selection];
+ if(target&&!target.disabled){target.focus({preventScroll:true});target.scrollIntoView({block:"nearest"});}
+ else $("menuClose").focus({preventScroll:true});
+}
+function focusInventoryAction(){
+ const buttons=inventoryActionButtons();inventoryMenu.action=Math.min(inventoryMenu.action,buttons.length-1);
+ buttons.forEach((button,index)=>button.classList.toggle("selected",index===inventoryMenu.action));
+ buttons[inventoryMenu.action]?.focus({preventScroll:true});
+}
+function renderInventoryMenu(){
+ if(!inventoryMenu.open)return;
+ const p=state.player,atFeet=!!herbAt(p.x,p.y),choices=inventoryChoices(),blocked=state.dead||!!movement;
+ const restoreListFocus=document.activeElement?.parentElement===$("menuList");
+ if(!choices.includes(inventoryMenu.selection))inventoryMenu.selection=choices[0]??0;
+ $("menuCapacity").textContent=`${state.inventory.length} / ${INVENTORY_CAPACITY}枠`;
+ $("menuHealth").textContent=`HP ${p.hp} / ${p.maxHp}`;
+ $("menuList").replaceChildren(...state.inventory.map((type,index)=>{
+  const button=document.createElement("button");button.type="button";button.className="menu-row";
+  button.dataset.inventoryIndex=String(index);button.tabIndex=index===inventoryMenu.selection?0:-1;
+  button.classList.toggle("selected",index===inventoryMenu.selection);
+  button.setAttribute("aria-label",`${index+1}番目の薬草`);
+  button.setAttribute("aria-haspopup","true");
+  for(const [className,value] of [["menu-cursor","▶"],["menu-slot",String(index+1).padStart(2,"0")],["herb-icon","♧"],["menu-name",type==="herb"?"薬草":type]]){
+   const span=document.createElement("span");span.className=className;span.textContent=value;
+   if(className!=="menu-name")span.setAttribute("aria-hidden","true");button.append(span);
+  }
+  button.addEventListener("click",()=>selectInventoryItem(index));return button;
+ }));
+ $("menuEmpty").hidden=state.inventory.length>0;
+ $("menuFootText").textContent=atFeet?"足元：薬草":"足元：何もありません";
+ $("menuFoot").disabled=!atFeet;$("menuFoot").tabIndex=inventoryMenu.selection===state.inventory.length?0:-1;
+ $("menuFoot").classList.toggle("selected",atFeet&&inventoryMenu.selection===state.inventory.length);
+ const actions=inventoryMenu.stage==="actions",feet=inventoryMenu.itemIndex==="feet";
+ $("inventoryMenu").classList.toggle("has-actions",actions);$("menuActions").hidden=!actions;
+ $("drinkHerb").hidden=feet;$("putDownHerb").hidden=feet;$("pickUpHerb").hidden=!feet;
+ const selectedHerb=Number.isInteger(inventoryMenu.itemIndex)&&state.inventory[inventoryMenu.itemIndex]==="herb";
+ $("drinkHerb").disabled=blocked||!selectedHerb||p.hp>=p.maxHp;
+ $("putDownHerb").disabled=blocked||!selectedHerb||atFeet;
+ $("pickUpHerb").disabled=blocked||!atFeet||state.inventory.length>=INVENTORY_CAPACITY;
+ $("menuItemTitle").textContent=feet?"足元の薬草":`薬草 · ${Number(inventoryMenu.itemIndex)+1}番`;
+ $("menuDescription").textContent=feet?(state.inventory.length>=INVENTORY_CAPACITY?"持ち物がいっぱいです。飲むか置いて、空きを作ってください。":"拾うと持ち物に入ります。1ターン進み、敵も行動します。"):(p.hp>=p.maxHp?"HPは満タンです。HPが減ったときに飲めます。":"飲むとHPを20回復します。飲む・置くは1ターン進み、敵も行動します。");
+ const buttons=inventoryActionButtons();inventoryMenu.action=Math.max(0,Math.min(inventoryMenu.action,buttons.length-1));
+ [$("drinkHerb"),$("putDownHerb"),$("pickUpHerb"),$("menuBack")].forEach(button=>button.classList.toggle("selected",actions&&button===buttons[inventoryMenu.action]));
+ if(restoreListFocus)focusInventoryChoice();
+}
+function openInventoryMenu(){
+ stopHold();if(state.dead||inventoryMenu.open)return false;
+ Object.assign(inventoryMenu,{open:true,stage:"list",selection:0,itemIndex:null,action:0,returnFocus:document.activeElement});
+ $("openInventory").setAttribute("aria-expanded","true");document.body.classList.add("inventory-open");
+ renderInventoryMenu();$("inventoryMenu").showModal();focusInventoryChoice();sound.play("confirm");return true;
+}
+function closeInventoryMenu(restoreFocus=true,playSound=true){
+ if(!inventoryMenu.open)return;
+ inventoryMenu.open=false;inventoryMenu.stage="list";inventoryMenu.itemIndex=null;
+ $("inventoryMenu").close();$("openInventory").setAttribute("aria-expanded","false");document.body.classList.remove("inventory-open");
+ if(restoreFocus){const previous=inventoryMenu.returnFocus;const target=previous?.isConnected&&!previous.disabled&&previous!==document.body?previous:$("openInventory");if(!target.disabled)target.focus({preventScroll:true});}
+ inventoryMenu.returnFocus=null;if(playSound)sound.play("confirm");
+}
+function selectInventoryItem(index){
+ if(!inventoryMenu.open||!inventoryChoices().includes(index))return;
+ inventoryMenu.selection=index;inventoryMenu.itemIndex=index===state.inventory.length?"feet":index;
+ inventoryMenu.stage="actions";inventoryMenu.action=0;renderInventoryMenu();focusInventoryAction();sound.play("confirm");
+}
+function backInventoryMenu(){
+ if(inventoryMenu.stage==="actions"){
+  inventoryMenu.stage="list";inventoryMenu.itemIndex=null;inventoryMenu.action=0;
+  renderInventoryMenu();focusInventoryChoice();sound.play("confirm");
+ }else closeInventoryMenu();
+}
+function performInventoryAction(action){
+ if(!inventoryMenu.open||inventoryMenu.stage!=="actions"||state.dead||movement)return false;
+ const index=inventoryMenu.itemIndex;
+ if(action==="pickup")return index==="feet"&&pickUpHerb();
+ if(!Number.isInteger(index)||state.inventory[index]!=="herb")return false;
+ return action==="drink"?drinkHerb(index):action==="drop"?putDownHerb(index):false;
+}
+function handleInventoryKey(event){
+ const key=event.key.length===1?event.key.toLowerCase():event.key;
+ if(key==="Tab")return; // The native modal keeps tab focus inside the menu.
+ if(["Escape","i","ArrowLeft","a","4"].includes(key)){
+  event.preventDefault();if(!event.repeat){if(key==="i")closeInventoryMenu();else backInventoryMenu();}return;
+ }
+ if(["ArrowUp","ArrowDown","w","s","8","2"].includes(key)){
+  event.preventDefault();const direction=["ArrowUp","w","8"].includes(key)?-1:1;
+  if(inventoryMenu.stage==="list"){
+   const choices=inventoryChoices();if(!choices.length)return;
+   const position=choices.indexOf(inventoryMenu.selection);inventoryMenu.selection=choices[(position+direction+choices.length)%choices.length];
+   renderInventoryMenu();focusInventoryChoice();
+  }else{
+   const buttons=inventoryActionButtons();inventoryMenu.action=(inventoryMenu.action+direction+buttons.length)%buttons.length;focusInventoryAction();
+  }
+  return;
+ }
+ if(["Enter"," ","ArrowRight","d","6"].includes(key)){
+  event.preventDefault();if(event.repeat)return;
+  const focused=document.activeElement;
+  if((key==="Enter"||key===" ")&&focused?.tagName==="BUTTON"&&$("inventoryMenu").contains(focused)){focused.click();return;}
+  if(inventoryMenu.stage==="list")selectInventoryItem(inventoryMenu.selection);
+  else inventoryActionButtons()[inventoryMenu.action]?.click();return;
+ }
+ // Gameplay keys never reach movement, attack, wait, or stairs while this menu is open.
+ if(keys[key]||[".","5","h","g","p"].includes(key))event.preventDefault();
+}
+function reveal(){
+ state.visible.fill(0);const p=state.player,id=state.roomAt[p.y*W+p.x],near=distanceField(p,null,2);
+ for(let i=0;i<near.length;i++)if(near[i]>=0){state.visible[i]=1;const x=i%W,y=Math.floor(i/W);for(const[dx,dy]of DIRECTIONS){const xx=x+dx,yy=y+dy;if(xx>=0&&xx<W&&yy>=0&&yy<H&&!passable(xx,yy))state.visible[yy*W+xx]=1;}}
+ if(id>=0){const r=state.rooms[id];for(let y=r.y-1;y<=r.y+r.h;y++)for(let x=r.x-1;x<=r.x+r.w;x++)state.visible[y*W+x]=1;}
+ for(let i=0;i<state.seen.length;i++)if(state.visible[i])state.seen[i]=1;
+}
+function onStairs(){return state.player.x===state.stairs.x&&state.player.y===state.stairs.y;}
+function record(message){state.log.push(message);if(state.log.length>3)state.log.shift();}
+function announce(message){$("status").textContent=message;}
+
+function experienceRequired(level){return level<MAX_LEVEL?EXPERIENCE_THRESHOLDS[level+1]:Infinity;}
+function gainExperience(amount){
+ const p=state.player,messages=[];p.exp+=amount;
+ while(p.level<MAX_LEVEL&&p.exp>=experienceRequired(p.level)){
+  p.level++;p.maxHp+=LEVEL_GROWTH.maxHp;p.attack+=LEVEL_GROWTH.attack;
+  p.hp=Math.min(p.maxHp,p.hp+LEVEL_GROWTH.maxHp);
+  const message=`Lv.${p.level}にレベルアップ！ 最大HP＋${LEVEL_GROWTH.maxHp}・攻撃力＋${LEVEL_GROWTH.attack}・HP${LEVEL_GROWTH.maxHp}回復。`;
+  record(message);messages.push(message);sound.play("levelUp");
+ }
+ return messages.join(" ");
+}
+
+function drawTile(c,x,y,s,gx,gy){
+ const i=gy*W+gx;if(gx<0||gx>=W||gy<0||gy>=H||(!wholeMap&&!state.seen[i])){c.fillStyle="#0b120e";c.fillRect(x,y,s,s);return;}
+ if(state.tiles[i]){const room=state.roomAt[i]>=0;c.fillStyle=room?((gx+gy)%2?"#bba875":"#b5a16d"):"#9c8c61";c.fillRect(x,y,s,s);if(s>10){c.fillStyle="#302d251c";c.fillRect(x,y,s,1);c.fillRect(x,y,1,s);if((gx*7+gy*11)%9===0)c.fillRect(x+s*.7,y+s*.65,s*.12,s*.07);}}
+ else{c.fillStyle="#334737";c.fillRect(x,y,s,s);if(s>10){c.fillStyle="#425743";c.fillRect(x+1,y+1,s-2,2);c.fillStyle="#25382b";c.fillRect(x,y+s-3,s,3);c.fillRect(x+s-2,y,2,s);}}
+}
+function drawStairs(c,x,y,s){c.fillStyle="#302e22";c.fillRect(x+s*.12,y+s*.13,s*.76,s*.74);c.strokeStyle="#f1d78e";c.lineWidth=Math.max(1,s*.08);for(let n=0;n<4;n++){const yy=y+s*(.25+n*.16);c.beginPath();c.moveTo(x+s*.25,yy);c.lineTo(x+s*(.43+n*.1),yy);c.stroke();}c.strokeStyle="#e9c477";c.lineWidth=Math.max(1,s*.05);c.strokeRect(x+s*.1,y+s*.1,s*.8,s*.8);}
+function drawHerb(c,x,y,s){
+ const p=s/12,rect=(xx,yy,w,h,color)=>{c.fillStyle=color;c.fillRect(x+xx*p,y+yy*p,w*p,h*p);};
+ rect(2,10,8,1,"#283d2655");rect(5,4,1,6,"#c6c47a");rect(2,3,4,3,"#548745");rect(1,2,4,2,"#83c16a");rect(7,2,3,4,"#659e4e");rect(6,1,4,2,"#afe08b");rect(3,7,3,2,"#79ac52");rect(6,5,3,2,"#94ca70");rect(4,9,4,1,"#e9d39a");
+}
+function drawRemains(c,x,y,s,remain){
+ c.save();c.fillStyle="#514a5266";c.fillRect(x+s*.16,y+s*.18,s*.68,s*.65);
+ c.strokeStyle="#ddd5c7";c.lineWidth=Math.max(1,s*.055);c.strokeRect(x+s*.23,y+s*.25,s*.54,s*.48);
+ if(s>=12){const left=Math.max(0,remain.readyTurn-state.turns);c.fillStyle="#fff0c9";c.textAlign="center";c.textBaseline="middle";c.font=`bold ${Math.max(9,s*.47)}px system-ui`;c.fillText(left||"…",x+s*.5,y+s*.52);}
+ c.restore();
+}
+function drawPlayer(c,x,y,s){
+ c.fillStyle="#282d2855";c.fillRect(x+s*.15,y+s*.8,s*.7,s*.12);const pixel=s/12,rect=(xx,yy,w,h,col)=>{c.fillStyle=col;c.fillRect(x+xx*pixel,y+yy*pixel,w*pixel,h*pixel);};
+ rect(3,9,2,2,"#26372e");rect(7,9,2,2,"#26372e");rect(3,6,6,4,"#54b6a6");rect(5,4,3,3,"#f2d4a1");rect(8,4,1,1,"#26372e");rect(2,2,8,3,"#d9b567");rect(4,1,4,2,"#ecd08a");rect(2,5,4,1,"#704f36");rect(8,7,3,1,"#e5bd6a");
+ if(s>=15){const [dx,dy]=state.player.facing;c.fillStyle="#e9f5dc";c.beginPath();const cx=x+s*(.5+dx*.4),cy=y+s*(.5+dy*.4);c.moveTo(cx+dx*s*.12,cy+dy*s*.12);c.lineTo(cx-dy*s*.07,cy+dx*s*.07);c.lineTo(cx+dy*s*.07,cy-dx*s*.07);c.closePath();c.fill();}
+}
+function drawEnemy(c,x,y,s,e){
+ const spec=enemyType(e),p=s/12,rect=(xx,yy,w,h,color)=>{c.fillStyle=color;c.fillRect(x+xx*p,y+yy*p,w*p,h*p);};
+ c.save();if(spec.wallWalk&&!passable(e.x,e.y))c.globalAlpha=.68;
+ const color=spec.color,dark="#3c4540",eye="#fff0c5";
+ rect(2,10,8,1,"#30231f55");
+ if(spec.sprite==="soldier"){
+  rect(3,9,2,2,dark);rect(7,9,2,2,dark);rect(2,5,8,5,color);rect(3,2,6,5,color);rect(2,3,8,2,"#678899");rect(4,4,4,2,dark);rect(4,4,1,1,eye);rect(7,4,1,1,eye);rect(1,6,3,4,color);rect(1,6,3,1,"#d0e2e8");rect(8,6,3,1,eye);
+ }else if(spec.sprite==="beast"){
+  rect(8,6,3,2,color);rect(10,4,1,3,color);rect(2,6,7,4,color);rect(3,3,5,5,color);rect(2,2,2,3,dark);rect(7,2,2,3,dark);rect(3,2,1,2,eye);rect(7,2,1,2,eye);rect(3,5,1,1,dark);rect(6,5,1,1,dark);rect(4,7,3,1,eye);rect(5,6,1,1,dark);rect(2,9,2,1,dark);rect(7,9,2,1,dark);
+ }else if(spec.sprite==="archer"){
+  rect(3,2,6,3,color);rect(2,4,8,5,color);rect(4,4,4,3,dark);rect(5,5,1,1,eye);rect(3,8,6,2,color);rect(3,10,2,1,dark);rect(7,10,2,1,dark);rect(9,3,1,1,"#e5c477");rect(10,4,1,5,"#e5c477");rect(9,9,1,1,"#e5c477");rect(9,4,1,5,"#e5c477");rect(7,6,4,1,eye);
+ }else if(spec.sprite==="mushroom"){
+  rect(2,3,8,1,color);rect(1,4,10,3,color);rect(4,2,4,2,color);rect(2,7,8,1,dark);rect(4,8,4,3,"#e7d8b2");rect(3,4,2,1,"#e7d8b2");rect(7,5,2,1,"#e7d8b2");rect(5,8,1,1,dark);rect(7,8,1,1,dark);
+ }else if(spec.sprite==="caller"){
+  rect(3,3,6,6,color);rect(2,2,2,3,dark);rect(8,2,2,3,dark);rect(3,5,2,1,eye);rect(7,5,2,1,eye);rect(3,9,2,2,dark);rect(7,9,2,2,dark);rect(6,7,5,1,"#f3d17d");rect(10,6,1,3,"#f3d17d");rect(7,7,1,1,dark);
+ }else if(spec.sprite==="beetle"){
+  rect(1,4,1,1,dark);rect(10,4,1,1,dark);rect(1,7,1,1,dark);rect(10,7,1,1,dark);rect(1,10,2,1,dark);rect(9,10,2,1,dark);rect(3,2,6,2,color);rect(2,4,8,6,color);rect(3,10,6,1,color);rect(5,4,1,6,dark);rect(3,3,1,1,eye);rect(8,3,1,1,eye);
+ }else if(spec.sprite==="mage"){
+  rect(5,1,2,2,color);rect(4,3,4,2,color);rect(2,5,8,1,color);rect(4,6,4,2,dark);rect(5,6,1,1,eye);rect(7,6,1,1,eye);rect(3,8,6,3,color);rect(9,4,1,7,"#b08c65");rect(9,3,2,2,e.charge?"#ff987c":"#efd4ec");
+ }else if(spec.sprite==="bat"){
+  rect(0,3,2,3,color);rect(10,3,2,3,color);rect(1,5,3,3,color);rect(8,5,3,3,color);rect(3,6,2,3,color);rect(7,6,2,3,color);rect(4,3,4,6,dark);rect(4,2,1,2,color);rect(7,2,1,2,color);rect(4,5,1,1,eye);rect(7,5,1,1,eye);rect(5,7,1,2,eye);rect(7,7,1,2,eye);
+ }else if(spec.sprite==="slime"){
+  rect(3,4,6,1,color);rect(2,5,8,4,color);rect(1,9,10,2,color);rect(3,6,1,1,dark);rect(7,6,1,1,dark);rect(4,5,2,1,"#cfedee");
+ }else if(spec.sprite==="ghost"){
+  rect(4,1,4,1,color);rect(3,2,6,2,color);rect(2,4,8,5,color);rect(1,6,2,3,color);rect(9,6,2,3,color);rect(2,9,2,1,color);rect(5,9,2,2,color);rect(8,9,2,1,color);rect(3,4,2,2,dark);rect(7,4,2,2,dark);rect(4,4,1,1,eye);rect(7,4,1,1,eye);rect(5,7,2,1,"#cfedee");
+ }else if(spec.sprite==="boar"){
+  rect(2,5,8,5,color);rect(3,2,6,4,color);rect(2,2,2,2,dark);rect(8,2,2,2,dark);rect(3,4,2,1,e.charge?"#efbd76":eye);rect(7,4,2,1,e.charge?"#efbd76":eye);rect(3,6,6,3,"#d2aa87");rect(4,7,1,1,dark);rect(7,7,1,1,dark);rect(2,6,1,3,eye);rect(9,6,1,3,eye);rect(3,9,2,2,dark);rect(7,9,2,2,dark);rect(1,7,1,1,color);
+ }else if(spec.sprite==="statue"){
+  rect(2,10,8,1,dark);rect(3,8,6,2,color);rect(2,5,8,4,color);rect(3,1,6,5,color);rect(2,3,1,4,"#727f79");rect(9,3,1,4,"#727f79");rect(4,3,1,1,e.asleep?dark:"#f0d895");rect(7,3,1,1,e.asleep?dark:"#f0d895");rect(5,5,2,1,dark);rect(4,7,4,1,"#727f79");rect(6,1,1,2,"#727f79");rect(2,9,8,1,"#d7d8c5");
+ }else if(spec.sprite==="fang"){
+  rect(2,5,8,5,color);rect(3,2,6,5,color);rect(2,1,2,3,dark);rect(8,1,2,3,dark);rect(3,4,2,1,eye);rect(7,4,2,1,eye);rect(4,6,4,2,dark);rect(4,7,1,3,eye);rect(7,7,1,3,eye);rect(2,9,2,2,dark);rect(8,9,2,2,dark);rect(0,7,2,1,color);
+ }else if(spec.sprite==="axe"){
+  rect(2,5,7,5,color);rect(3,2,5,4,color);rect(2,3,1,2,eye);rect(8,3,1,2,eye);rect(4,4,1,1,dark);rect(7,4,1,1,dark);rect(4,6,3,2,"#e0ba95");rect(3,9,2,2,dark);rect(7,9,2,2,dark);rect(9,3,1,8,"#c8a06b");rect(8,1,3,3,"#cad2c3");rect(10,2,2,2,"#eef0dd");
+ }else if(spec.sprite==="pikeman"){
+  rect(3,2,5,4,color);rect(2,3,7,2,dark);rect(4,4,1,1,eye);rect(6,4,1,1,eye);rect(2,6,7,4,color);rect(3,9,2,2,dark);rect(7,9,2,2,dark);rect(10,2,1,9,"#ac8b64");rect(10,0,1,3,"#edf0dc");rect(9,1,3,1,"#edf0dc");rect(7,6,4,1,eye);
+ }else if(spec.sprite==="drummer"){
+  rect(3,2,6,5,color);rect(2,1,2,3,dark);rect(8,1,2,3,dark);rect(4,4,1,1,eye);rect(7,4,1,1,eye);rect(2,7,8,3,"#a66b4b");rect(2,6,8,1,"#f4d99d");rect(2,9,8,1,"#f4d99d");rect(4,7,1,2,"#f4d99d");rect(7,7,1,2,"#f4d99d");rect(1,4,1,4,"#dfc27e");rect(10,4,1,4,"#dfc27e");rect(3,10,2,1,dark);rect(7,10,2,1,dark);
+ }else if(spec.sprite==="mole"){
+  rect(2,5,8,5,color);rect(3,2,6,5,color);rect(2,2,2,2,dark);rect(8,2,2,2,dark);rect(3,4,2,2,dark);rect(7,4,2,2,dark);rect(5,4,2,1,"#d4cec0");rect(5,6,2,2,"#e5bbad");rect(1,8,2,2,"#ead8b7");rect(9,8,2,2,"#ead8b7");rect(7,8,3,3,"#77827d");rect(8,8,1,1,"#c9d0c1");
+ }else if(spec.sprite==="samurai"){
+  rect(3,2,6,5,color);rect(2,2,8,2,dark);rect(2,1,2,2,"#ead39b");rect(8,1,2,2,"#ead39b");rect(4,4,1,1,eye);rect(7,4,1,1,eye);rect(4,6,4,1,dark);rect(2,7,8,3,color);rect(3,8,6,1,dark);rect(3,10,2,1,dark);rect(7,10,2,1,dark);rect(10,3,1,7,"#e5e9d9");rect(9,8,3,1,"#dfbd70");rect(10,9,1,2,"#755a47");
+ }else if(spec.sprite==="spirit"){
+  rect(4,2,4,1,color);rect(3,3,6,4,color);rect(2,7,8,2,color);rect(3,9,2,1,color);rect(7,9,2,1,color);rect(5,10,2,1,color);rect(3,2,1,2,"#b5c6b8");rect(8,2,1,2,"#b5c6b8");rect(4,4,1,2,dark);rect(7,4,1,2,dark);rect(5,7,2,1,dark);
+ }else{
+  rect(3,3,6,7,color);rect(2,5,8,4,color);rect(2,2,2,3,dark);rect(8,2,2,3,dark);rect(3,5,2,2,eye);rect(7,5,2,2,eye);rect(4,5,1,1,dark);rect(7,5,1,1,dark);rect(5,8,2,1,dark);rect(2,9,2,1,dark);rect(8,9,2,1,dark);
+ }
+ if(spec.elite){rect(4,1,4,1,"#f7df97");rect(4,0,1,1,"#f7df97");rect(7,0,1,1,"#f7df97");}
+ if(spec.shield){
+  const [dx,dy]=e.facing,cx=x+s*(.5+dx*.35),cy=y+s*(.5+dy*.35);
+  c.strokeStyle="#e6edcd";c.lineWidth=Math.max(1,s*.1);c.beginPath();c.moveTo(cx-dy*s*.22,cy+dx*s*.22);c.lineTo(cx+dy*s*.22,cy-dx*s*.22);c.stroke();
+  c.fillStyle="#fbf5d4";c.beginPath();c.moveTo(cx+dx*s*.17,cy+dy*s*.17);c.lineTo(cx-dy*s*.08,cy+dx*s*.08);c.lineTo(cx+dy*s*.08,cy-dx*s*.08);c.closePath();c.fill();
+ }
+ if(s>=15){
+  if(!spec.spirit)for(let n=0;n<spec.tier;n++)rect(0,2+n*2,1,1,"#f1dba4");
+  c.fillStyle="#344137";c.fillRect(x+s*.12,y+s*.02,s*.76,s*.09);c.fillStyle=color;c.fillRect(x+s*.12,y+s*.02,s*.76*e.hp/e.maxHp,s*.09);
+  if(e.asleep){c.fillStyle="#c8d8cd";c.font=`bold ${Math.max(8,s*.33)}px system-ui`;c.fillText("Z",x+s*.73,y+s*.39);}
+  else if(spec.actionInterval>1&&e.actionCooldown>0){c.fillStyle="#b8d4e2";c.fillRect(x+s*.85,y+s*.16,s*.04,s*.2);c.fillRect(x+s*.94,y+s*.16,s*.04,s*.2);}
+  else if(e.mode==="chase"){c.fillStyle=e.charge?(spec.dashAttack?"#efbd76":"#ff987c"):"#f7d88a";c.fillRect(x+s*.85,y+s*.14,s*.08,s*.2);c.fillRect(x+s*.85,y+s*.38,s*.08,s*.06);}
+  const bonus=drumBonusFor(e);if(bonus){c.strokeStyle="#f3ca78";c.lineWidth=Math.max(1,s*.06);c.strokeRect(x+s*.06,y+s*.06,s*.88,s*.88);c.fillStyle="#ffe2a0";c.font=`bold ${Math.max(8,s*.3)}px system-ui`;c.fillText("+"+bonus,x+s*.08,y+s*.95);}
+ }
+ c.restore();
+}
+function renderMonsterGuide(){
+ if(state.guideFloor===floorNumber)return;state.guideFloor=floorNumber;
+ const row=floorMonsters(),label=floorNumber>30?"31階以降（29〜30階の候補）":`${row.from}〜${row.to}階`;
+ $("enemyGuideTitle").textContent=`この階の出現候補 · ${label}`;
+ $("enemyPoolNote").textContent=`初期配置・30ターンごとの追加出現・召喚：各候補の確率は1/${row.types.length}。憑依では表にない上位種も現れます。`;
+ $("enemyGuide").replaceChildren(...row.types.map(type=>{
+  const spec=ENEMY_TYPES[type],item=document.createElement("li");
+  const attackLabel=monsterAttackLabel(spec);
+  item.innerHTML=`<strong><i class="dot" style="background:${spec.color}"></i>${spec.name}</strong><small>Lv.${spec.tier} · HP ${spec.hp} · ${attackLabel} · EXP ${spec.exp}<br>${spec.description}</small>`;return item;
+ }));
+ $("monsterTable").replaceChildren(...MONSTER_TABLE.map(entry=>{
+  const item=document.createElement("div");item.className="monster-table-row"+(entry===row?" current":"");
+  const range=entry.to===Infinity?`${entry.from}階以降`:`${entry.from}〜${entry.to}階`;
+  item.innerHTML=`<b>${range}${entry===row?(floorNumber>30?" · 継続中":" · 現在の階"):""}</b>${entry.types.map(type=>ENEMY_TYPES[type].name).join("・")}`;return item;
+ }));
+ $("monsterData").replaceChildren(...ENEMY_TYPE_IDS.map(type=>{
+  const spec=ENEMY_TYPES[type],item=document.createElement("div"),ranges=[];
+  for(const entry of MONSTER_TABLE.filter(row=>row.types.includes(type))){const last=ranges.at(-1);if(last&&last[1]+1===entry.from)last[1]=entry.to;else ranges.push([entry.from,entry.to]);}
+  const range=spec.spirit?"武者系の撃破後のみ":ranges.length?ranges.map(([a,b])=>`${a}〜${b}F`).join("・"):"自然出現なし · 憑依で登場";
+  item.className="monster-table-row";item.innerHTML=`<b><i class="dot" style="background:${spec.color}"></i>${spec.name} · ${spec.spirit?"特殊":`Lv.${spec.tier}`}</b>HP ${spec.hp} · ${monsterAttackLabel(spec)} · EXP ${spec.exp}<br>${spec.description}<br>出現：${range}`;return item;
+ }));
+}
+function monsterAttackLabel(spec){
+ if(spec.spirit)return "攻撃しない";
+ if(spec.criticalChance)return `攻撃 ${spec.attack} · 痛恨 ${spec.attack*spec.criticalMultiplier}（10％）`;
+ if(spec.dashAttack)return `通常攻撃 ${spec.attack} · 突進 ${spec.dashDamage}`;
+ if(spec.rangedAttack!==undefined)return `通常攻撃 ${spec.attack} · 溜め撃ち ${spec.rangedAttack}`;
+ return `攻撃 ${spec.attack}`;
+}
+function drawScene(now=performance.now()){
+ const vw=wholeMap?W:25,vh=wholeMap?H:19,s=canvas.width/vw,height=Math.round(s*vh),p=displayedPosition(state.player,now);
+ if(canvas.height!==height)canvas.height=height;canvas.style.aspectRatio=vw+"/"+vh;ctx.imageSmoothingEnabled=false;
+ const ox=wholeMap?0:Math.max(0,Math.min(W-vw,p.x-Math.floor(vw/2))),oy=wholeMap?0:Math.max(0,Math.min(H-vh,p.y-Math.floor(vh/2)));
+ for(let y=Math.floor(oy);y<Math.ceil(oy+vh);y++)for(let x=Math.floor(ox);x<Math.ceil(ox+vw);x++)drawTile(ctx,(x-ox)*s,(y-oy)*s,s,x,y);
+ const within=c=>c.x+1>ox&&c.x<ox+vw&&c.y+1>oy&&c.y<oy+vh,st=state.stairs;
+ const enemyVisible=e=>wholeMap||state.seen[e.y*W+e.x]||movement?.paths.get(e)?.some(c=>state.seen[c.y*W+c.x]);
+ const remainsByCell=new Map();for(const remain of state.remains){const i=remain.y*W+remain.x,first=remainsByCell.get(i);if(!first||remain.readyTurn<first.readyTurn)remainsByCell.set(i,remain);}
+ if((wholeMap||state.seen[st.y*W+st.x])&&within(st))drawStairs(ctx,(st.x-ox)*s,(st.y-oy)*s,s);
+ for(const item of state.items)if((wholeMap||state.seen[item.y*W+item.x])&&within(item))drawHerb(ctx,(item.x-ox)*s,(item.y-oy)*s,s);
+ for(const remain of remainsByCell.values())if((wholeMap||state.seen[remain.y*W+remain.x])&&within(remain))drawRemains(ctx,(remain.x-ox)*s,(remain.y-oy)*s,s,remain);
+ for(const e of state.enemies)if(e.charge&&enemyVisible(e)){
+  const spec=enemyType(e);
+  for(const c of rayCells(e,e.charge,spec.range??spec.dashRange,true))if(within(c)&&(wholeMap||state.seen[c.y*W+c.x])){
+   ctx.fillStyle=spec.dashAttack?"#e5b16d55":"#ed786a55";ctx.fillRect((c.x-ox)*s+1,(c.y-oy)*s+1,s-2,s-2);
+   ctx.strokeStyle=spec.dashAttack?"#efbd76":"#f5a28a";ctx.lineWidth=Math.max(1,s*.04);ctx.strokeRect((c.x-ox)*s+2,(c.y-oy)*s+2,s-4,s-4);
+  }
+ }
+ for(const e of state.enemies){const pos=displayedPosition(e,now);if(enemyVisible(e)&&within(pos))drawEnemy(ctx,(pos.x-ox)*s,(pos.y-oy)*s,s,e);}
+ drawPlayer(ctx,(p.x-ox)*s,(p.y-oy)*s,s);
+ if(!movement)for(const shot of state.shots){
+  const end=shot.cells.at(-1);if(!end||(!wholeMap&&!state.seen[shot.y*W+shot.x]))continue;
+  ctx.strokeStyle=shot.color;ctx.lineWidth=Math.max(1,s*.08);ctx.beginPath();ctx.moveTo((shot.x-ox+.5)*s,(shot.y-oy+.5)*s);ctx.lineTo((end.x-ox+.5)*s,(end.y-oy+.5)*s);ctx.stroke();
+ }
+ if(state.effect&&!movement&&within(state.effect)){ctx.strokeStyle=state.effect.kind==="heal"?"#9cdda3":state.effect.kind==="hit"?"#f8ead0":"#f19b87";ctx.lineWidth=Math.max(1,s*.06);ctx.strokeRect((state.effect.x-ox)*s+2,(state.effect.y-oy)*s+2,s-4,s-4);}
+ mctx.fillStyle="#0b120e";mctx.fillRect(0,0,mini.width,mini.height);const ms=6;
+ for(let y=0;y<H;y++)for(let x=0;x<W;x++){const i=y*W+x;if(state.tiles[i]&&(wholeMap||state.seen[i])){mctx.fillStyle=state.roomAt[i]>=0?"#8c9466":"#626d4d";mctx.fillRect(x*ms,y*ms,ms,ms);}}
+ if(wholeMap||state.seen[st.y*W+st.x]){mctx.fillStyle="#edc56f";mctx.fillRect(st.x*ms,st.y*ms,ms,ms);}
+ for(const item of state.items)if(wholeMap||state.seen[item.y*W+item.x]){mctx.fillStyle="#8ac66b";mctx.fillRect(item.x*ms+1,item.y*ms+1,ms-2,ms-2);}
+ for(const remain of remainsByCell.values())if(wholeMap||state.seen[remain.y*W+remain.x]){mctx.fillStyle="#d8c9a8";mctx.fillRect(remain.x*ms+1,remain.y*ms+1,ms-2,ms-2);}
+ for(const e of state.enemies)if(enemyVisible(e)){const pos=displayedPosition(e,now);mctx.fillStyle=enemyType(e).color;mctx.fillRect(pos.x*ms,pos.y*ms,ms,ms);}
+ mctx.fillStyle="#82e2ce";mctx.fillRect(p.x*ms-1,p.y*ms-1,ms+2,ms+2);
+}
+function render(){
+ reveal();drawScene();
+ renderMonsterGuide();
+ renderInventory();
+ $("descend").disabled=state.dead||!!movement||!onStairs();$("floor").textContent=floorNumber;
+ const counts=ENEMY_TYPE_IDS.map(type=>({name:ENEMY_TYPES[type].name,count:state.enemies.filter(e=>e.type===type).length})).filter(c=>c.count).map(c=>`${c.name} <b>${c.count}</b>`).join(" · ");
+ $("stats").innerHTML=`部屋 <b>${state.rooms.length}</b> · 移動 <b>${state.moves}</b> 歩<br>残りの敵 <b>${state.enemies.length}</b> · 撃破 <b>${state.totalKills}</b>${state.remains.length?` · 復活待ち <b>${state.remains.length}</b>`:""}<br>${counts||"敵はいません"}<br>あなたの攻撃 <b>${state.player.attack}</b><br>地形番号 <b>${state.seed}</b>`;
+ $("battleLog").replaceChildren(...state.log.map(t=>{const p=document.createElement("p");p.textContent=t;return p;}));
+ $("mode").textContent=wholeMap?"全体図 · 地形・敵・薬草の配置を表示":"探索中 · 探索済みの場所にいる敵が見えます";$("mapToggle").textContent=wholeMap?"探索に戻る":"全体を見る";$("mapToggle").setAttribute("aria-pressed",String(wholeMap));
+ const p=state.player,required=experienceRequired(p.level),lowHp=p.hp<=Math.ceil(p.maxHp/4);
+ $("poisonStatus").hidden=p.poisonTurns===0;$("poisonStatus").textContent=`毒${p.poisonDamage??1} · ${p.poisonTurns}T`;$("poisonStatus").setAttribute("title",`毒の残り${p.poisonTurns}ターン。ターン終了時に${p.poisonDamage??1}ダメージ。`);
+ const maxLevel=p.level===MAX_LEVEL,base=EXPERIENCE_THRESHOLDS[p.level],span=maxLevel?1:required-base,progress=maxLevel?1:Math.max(0,Math.min(span,p.exp-base));
+ $("levelText").textContent=p.level;$("expText").textContent=maxLevel?`EXP ${p.exp} · MAX`:`EXP ${p.exp} / ${required}`;$("expFill").style.width=`${100*progress/span}%`;$("expBar").setAttribute("aria-valuemax",String(span));$("expBar").setAttribute("aria-valuenow",String(progress));$("expBar").setAttribute("aria-valuetext",maxLevel?"最大レベル70":`累積経験値${p.exp}。次のレベルまであと${required-p.exp}`);
+ $("hpText").textContent=`${p.hp} / ${p.maxHp}`;$("hpText").classList.toggle("hp-low",lowHp);$("hpFill").style.width=`${100*p.hp/p.maxHp}%`;$("hpFill").style.background=lowHp?"#db7868":"#82bc83";$("hpBar").setAttribute("aria-valuemax",String(p.maxHp));$("hpBar").setAttribute("aria-valuenow",String(p.hp));$("turnText").textContent=`この階 ${state.turns} ターン`;$("turnText").setAttribute("title",`通算 ${state.totalTurns} ターン`);
+ $("death").hidden=!state.dead||!!movement;if(state.dead)$("deathSummary").textContent=`${floorNumber}階 · Lv.${p.level} · ${state.totalTurns}ターン · ${state.totalKills}体撃破`;
+ document.querySelectorAll(".pad button, #wait").forEach(b=>b.disabled=state.dead);
+}
+
+// An entrance extends its room by one legal step, for either the enemy or player.
+function associatedRooms(actor){
+ const id=state.roomAt[actor.y*W+actor.x],rooms=new Set();
+ if(id>=0){rooms.add(id);return rooms;}
+ for(const [dx,dy] of DIRECTIONS){
+  if(!terrainStep(actor.x,actor.y,dx,dy))continue;
+  const room=state.roomAt[(actor.y+dy)*W+actor.x+dx];if(room>=0)rooms.add(room);
+ }
+ return rooms;
+}
+function detectsPlayer(enemy,playerRooms=associatedRooms(state.player)){
+ if(enemyCanAttack(enemy))return true;
+ return [...associatedRooms(enemy)].some(id=>playerRooms.has(id));
+}
+function roomExits(id){
+ state.roomExits??=new Map();if(state.roomExits.has(id))return state.roomExits.get(id);
+ const r=state.rooms[id],exits=new Map();
+ for(let y=r.y;y<r.y+r.h;y++)for(let x=r.x;x<r.x+r.w;x++){
+  for(const [dx,dy] of [[0,-1],[1,0],[0,1],[-1,0]]){
+   const xx=x+dx,yy=y+dy;if(passable(xx,yy)&&state.roomAt[yy*W+xx]<0)exits.set(yy*W+xx,{x:xx,y:yy});
+  }
+ }
+ const result=[...exits.values()];state.roomExits.set(id,result);return result;
+}
+function directionIndex(dx,dy){return DIRECTIONS.findIndex(([x,y])=>x===dx&&y===dy);}
+function directionOptions(index,offsets){return offsets.map(offset=>DIRECTIONS[(index+offset+8)%8]);}
+function enemyTerrainStep(enemy,dx,dy){
+ if(!enemyType(enemy).wallWalk)return terrainStep(enemy.x,enemy.y,dx,dy);
+ const x=enemy.x+dx,y=enemy.y+dy;
+ return !(dx&&dy)&&x>0&&x<W-1&&y>0&&y<H-1;
+}
+function canEnemyStep(enemy,[dx,dy]){
+ const x=enemy.x+dx,y=enemy.y+dy;
+ return enemyTerrainStep(enemy,dx,dy)&&!enemyAt(x,y,enemy)&&!(x===state.player.x&&y===state.player.y);
+}
+function stepEnemy(enemy,step){
+ if(!step)return false;const [dx,dy]=step,oldRoom=state.roomAt[enemy.y*W+enemy.x],old={x:enemy.x,y:enemy.y};
+ enemy.x+=dx;enemy.y+=dy;enemy.facing=[dx,dy];
+ if(oldRoom<0&&state.roomAt[enemy.y*W+enemy.x]>=0)enemy.entry=old;
+ enemy.stuckTurns=0;recordStep(enemy);return true;
+}
+function moveEnemyToward(enemy,target){
+ if(enemyType(enemy).wallWalk)return moveGhostToward(enemy,target);
+ const dx=Math.sign(target.x-enemy.x),dy=Math.sign(target.y-enemy.y),index=directionIndex(dx,dy);
+ if(index<0)return false;
+ // Consider only the destination direction and its two neighbors; no map-wide pathfinding.
+ return stepEnemy(enemy,directionOptions(index,[0,-1,1]).find(step=>canEnemyStep(enemy,step)));
+}
+function wanderEnemy(enemy){
+ if(enemy.wanderTarget&&enemy.x===enemy.wanderTarget.x&&enemy.y===enemy.wanderTarget.y)enemy.wanderTarget=null;
+ const id=state.roomAt[enemy.y*W+enemy.x];
+ if(!enemy.wanderTarget&&id>=0){
+  const exits=roomExits(id),others=exits.filter(c=>!enemy.entry||c.x!==enemy.entry.x||c.y!==enemy.entry.y),choices=others.length?others:exits;
+  if(choices.length)enemy.wanderTarget=choices[Math.floor(gameRandom()*choices.length)];
+ }
+ if(enemy.wanderTarget)return moveEnemyToward(enemy,enemy.wanderTarget);
+ const index=directionIndex(...enemy.facing),options=directionOptions(index,[0,-1,1,-2,2]);
+ let step=options.find(direction=>canEnemyStep(enemy,direction));
+ // Turn back at a terrain dead end; congestion instead waits for the stuck handler.
+ if(!step&&!options.some(([dx,dy])=>enemyTerrainStep(enemy,dx,dy)))step=directionOptions(index,[-3,3,4]).find(direction=>canEnemyStep(enemy,direction));
+ return stepEnemy(enemy,step);
+}
+function moveEnemyAction(enemy){
+ if(enemy.lastSeen&&enemy.x===enemy.lastSeen.x&&enemy.y===enemy.lastSeen.y){enemy.lastSeen=null;enemy.mode="wander";}
+ const moved=enemy.lastSeen?moveEnemyToward(enemy,enemy.lastSeen):wanderEnemy(enemy);
+ if(moved)return true;
+ if(++enemy.stuckTurns>=5){
+  enemy.lastSeen=null;enemy.wanderTarget=null;enemy.mode="wander";enemy.stuckTurns=0;
+  return stepEnemy(enemy,shuffleGame(DIRECTIONS.slice()).find(step=>canEnemyStep(enemy,step)));
+ }
+ return false;
+}
+function enemyCanAttack(enemy){
+ const dx=state.player.x-enemy.x,dy=state.player.y-enemy.y;
+ const spec=enemyType(enemy);
+ return !spec.spirit&&!enemy.asleep&&(!spec.cardinalAttack||!dx||!dy)&&passable(enemy.x,enemy.y)&&Math.max(Math.abs(dx),Math.abs(dy))===1&&terrainStep(enemy.x,enemy.y,dx,dy);
+}
+function hurtPlayer(amount,message,effect="hurt"){
+ const p=state.player,before=p.hp;p.hp=Math.max(0,p.hp-amount);state.effect={x:p.x,y:p.y,kind:"hurt"};record(message);sound.play(effect);
+ if(p.hp<before)stopHold();
+ if(p.hp===0){state.dead=true;stopHold();sound.setScene(false);sound.play("death");announce("HPが0になりました。「もう一度挑戦する」で再開できます。");}
+ return before-p.hp;
+}
+function performEnemyAttack(enemy,ranged=false){
+ const p=state.player,spec=enemyType(enemy);
+ if(!ranged)enemy.facing=[Math.sign(p.x-enemy.x),Math.sign(p.y-enemy.y)];
+ const bonus=ranged&&spec.chargeAttack?0:drumBonusFor(enemy),base=(ranged?(spec.rangedAttack??spec.attack):spec.attack)+bonus;
+ const critical=!!spec.criticalChance&&gameRandom()<spec.criticalChance,power=base*(critical?spec.criticalMultiplier:1);
+ const action=critical?"痛恨の一撃！":ranged?(spec.chargeAttack?"溜め撃ち":spec.spearReach?"槍攻撃":spec.stoneThrow?"投石":"射撃"):"攻撃";
+ const damage=hurtPlayer(power,`${enemyName(enemy)}の${action}。${power}ダメージ。${bonus?` 戦鼓で攻撃＋${bonus}。`:""}`);
+ if(spec.drain)enemy.hp=Math.min(enemy.maxHp,enemy.hp+damage);
+ if(spec.poison&&!state.dead){p.poisonTurns=spec.poison;p.poisonDamage=spec.poisonDamage??1;p.poisonAppliedAt=state.totalTurns;record(`毒を受けました。毎ターン${p.poisonDamage}ダメージ・残り${spec.poison}ターン。`);}
+ return damage;
+}
+function rayCells(enemy,direction,range,preview=false){
+ const [dx,dy]=direction,cells=[];
+ for(let n=1;n<=range;n++){
+  const x=enemy.x+dx*n,y=enemy.y+dy*n;if(!terrainStep(x-dx,y-dy,dx,dy)||enemyAt(x,y,enemy))break;
+  cells.push({x,y});if(!preview&&x===state.player.x&&y===state.player.y)break;
+ }
+ return cells;
+}
+function shootingDirection(enemy){
+ const p=state.player,dx=p.x-enemy.x,dy=p.y-enemy.y,spec=enemyType(enemy),range=spec.range??spec.dashRange,distance=Math.max(Math.abs(dx),Math.abs(dy));
+ if(distance<2||distance>range||(dx&&dy&&(spec.rangedDirections===4||Math.abs(dx)!==Math.abs(dy))))return null;
+ const direction=[Math.sign(dx),Math.sign(dy)];
+ return rayCells(enemy,direction,range).some(c=>c.x===p.x&&c.y===p.y)?direction:null;
+}
+function fireRay(enemy,direction){
+ const spec=enemyType(enemy);sound.play(spec.spearReach?"attack":"shoot");const cells=rayCells(enemy,direction,spec.range);enemy.facing=direction;
+ state.shots.push({x:enemy.x,y:enemy.y,cells,color:spec.chargeAttack?"#f29b80":spec.stoneThrow?"#c4b09c":spec.spearReach?"#d3e1dc":"#e8d58e"});
+ if(cells.some(c=>c.x===state.player.x&&c.y===state.player.y))return performEnemyAttack(enemy,true);
+ record(`${enemyName(enemy)}の溜め撃ちは空振り。`);return 0;
+}
+function nearbyFreeCells(enemy){
+ return shuffleGame(DIRECTIONS.slice()).filter(([dx,dy])=>terrainStep(enemy.x,enemy.y,dx,dy)).map(([dx,dy])=>({x:enemy.x+dx,y:enemy.y+dy})).filter(c=>!enemyAt(c.x,c.y)&&!(c.x===state.player.x&&c.y===state.player.y)&&!(c.x===state.stairs.x&&c.y===state.stairs.y));
+}
+function summonEnemy(enemy){
+ if(!enemyCanAttack(enemy))return false;
+ const cell=nearbyFreeCells(enemy)[0];if(!cell)return false;
+ const child=makeEnemy(cell,randomMonsterType());state.enemies.push(child);enemy.summonCount++;sound.play("summon");
+ record(`${enemyName(enemy)}が${enemyName(child)}を呼びました。`);return true;
+}
+function splitEnemy(enemy){
+ const spec=enemyType(enemy);
+ if(!spec.split||enemy.hp<=0||enemy.splitCount>=spec.splitLimit||gameRandom()>=spec.splitChance)return 0;
+ const cell=nearbyFreeCells(enemy)[0];if(!cell)return 0;
+ const child=makeEnemy(cell,enemy.type);child.bornTurn=state.turns+1;
+ state.enemies.push(child);enemy.splitCount++;sound.play("split");return 1;
+}
+function moveGhostToward(enemy,target){
+ let goal=target;
+ // From inside a wall, aim at a legal, empty adjacent floor rather than the occupied player.
+ const cornerBlocked=target.x===state.player.x&&target.y===state.player.y&&Math.max(Math.abs(target.x-enemy.x),Math.abs(target.y-enemy.y))===1&&!enemyCanAttack(enemy);
+ if((!passable(enemy.x,enemy.y)||cornerBlocked)&&passable(target.x,target.y)){
+  const choices=DIRECTIONS.filter(([dx,dy])=>terrainStep(target.x,target.y,dx,dy))
+   .map(([dx,dy])=>({x:target.x+dx,y:target.y+dy}))
+   .filter(c=>!enemyAt(c.x,c.y,enemy)&&!(c.x===state.player.x&&c.y===state.player.y));
+  if(choices.length)goal=choices.reduce((best,c)=>Math.abs(c.x-enemy.x)+Math.abs(c.y-enemy.y)<Math.abs(best.x-enemy.x)+Math.abs(best.y-enemy.y)?c:best);
+ }
+ const dx=goal.x-enemy.x,dy=goal.y-enemy.y;
+ if(!dx&&!dy)return false;
+ const forward=Math.abs(dx)>Math.abs(dy)?[Math.sign(dx),0]:[0,Math.sign(dy)];
+ const index=directionIndex(...forward);
+ return stepEnemy(enemy,directionOptions(index,[0,-2,2,4]).find(step=>canEnemyStep(enemy,step)));
+}
+function performDash(enemy,direction){
+ const [dx,dy]=direction,spec=enemyType(enemy);let damage=0,hit=false;
+ enemy.facing=direction;sound.play("attack");
+ for(let n=0;n<spec.dashRange;n++){
+  if(!terrainStep(enemy.x,enemy.y,dx,dy))break;
+  const x=enemy.x+dx,y=enemy.y+dy;if(enemyAt(x,y,enemy))break;
+  if(x===state.player.x&&y===state.player.y){
+   hit=true;damage=hurtPlayer(spec.dashDamage,enemyName(enemy)+"の突進。"+spec.dashDamage+"ダメージ。");break;
+  }
+  stepEnemy(enemy,direction);
+ }
+ enemy.stuckTurns=0;
+ if(!hit)record(enemyName(enemy)+"の突進は空振り。");
+ return damage;
+}
+
+function enemyTurn(){
+ const p=state.player,playerRooms=associatedRooms(p);let damage=0;
+ const wakeRange=Math.max(0,...state.enemies.filter(e=>e.asleep).map(e=>enemyType(e).wakeRange));
+ const wakeDistances=wakeRange?distanceField(p,null,wakeRange):null;
+ // Snapshot excludes newborns; birth turn and initial cooldown are checked independently.
+ for(const e of [...state.enemies]){
+  if(e.bornTurn>=state.turns)continue;
+  const spec=enemyType(e);
+  if(spec.spirit){moveSpirit(e);continue;}
+  if(e.asleep){
+   const distance=wakeDistances?.[e.y*W+e.x];
+   if(!e.wakePending&&!(distance>=0&&distance<=spec.wakeRange))continue;
+   e.asleep=false;e.wakePending=false;e.mode="chase";e.lastSeen={x:p.x,y:p.y};
+   e.wanderTarget=null;e.actionCooldown=0;
+   record(enemyName(e)+"が目を覚ました！");sound.play("charge");continue;
+  }
+  const detected=detectsPlayer(e,playerRooms);
+  if(detected){e.lastSeen={x:p.x,y:p.y};e.mode="chase";e.wanderTarget=null;}
+  if(e.actionCooldown>0){e.actionCooldown--;continue;}
+  e.actionCooldown=spec.actionInterval-1;
+  if(e.charge){
+   const direction=e.charge;e.charge=null;
+   damage+=spec.dashAttack?performDash(e,direction):fireRay(e,direction);
+   if(state.dead)break;continue;
+  }
+  let attacks=0;
+  for(let action=0;action<spec.moveSteps&&!state.dead;action++){
+   if(spec.summonChance&&detected&&enemyCanAttack(e)&&gameRandom()<spec.summonChance&&summonEnemy(e)){e.stuckTurns=0;break;}
+   if(spec.retreat&&enemyCanAttack(e)&&retreatEnemy(e)){e.stuckTurns=0;break;}
+   if(enemyCanAttack(e)){
+    damage+=performEnemyAttack(e);e.stuckTurns=0;
+    if(++attacks>=spec.maxAttacks)break;
+    continue;
+   }
+   const direction=(spec.range||spec.dashAttack)&&detected?shootingDirection(e):null;
+   if(direction){
+    e.stuckTurns=0;
+    if(spec.chargeAttack||spec.dashAttack){
+     e.charge=direction;e.facing=direction;sound.play("charge");
+     record(spec.name+(spec.dashAttack?"が突進の構え。橙の射線から離れましょう。":"が溜めています。赤い射線から離れましょう。"));
+    }else damage+=fireRay(e,direction);
+    break;
+   }
+   if(!moveEnemyAction(e))break;
+  }
+  if(state.dead)break;
+ }
+ return damage;
+}
+function recoverHp(){
+ const p=state.player;
+ if(state.dead)return 0;
+ if(p.hp>=p.maxHp){state.healRemainder=0;return 0;}
+ // Store hundredths of HP as integers so fractional healing never drifts.
+ state.healRemainder+=p.maxHp;
+ const recovered=Math.min(p.maxHp-p.hp,Math.floor(state.healRemainder/100));
+ state.healRemainder%=100;p.hp+=recovered;
+ if(p.hp===p.maxHp)state.healRemainder=0;
+ return recovered;
+}
+function finishTurn(message,animationStart=performance.now()){
+ const wasPoisoned=state.player.poisonTurns>0;
+ state.turns++;state.totalTurns++;let damage=enemyTurn();
+ if(wasPoisoned&&!state.dead){
+  const poisonDamage=state.player.poisonDamage??1;damage+=hurtPlayer(poisonDamage,`毒で${poisonDamage}ダメージ。`,"poison");
+  if(state.player.poisonAppliedAt!==state.totalTurns)state.player.poisonTurns--;
+ }
+ if(!state.dead){
+  if(damage)message+=` 被ダメージ ${damage}。`;
+  const recovered=recoverHp();if(recovered)message+=` HPが${recovered}回復。`;
+  const spirits=spawnPendingSpirits();if(spirits)message+=` ぼうれい武者が${spirits}体現れました！`;
+  // Reinforcements join after existing enemies act, and take their first action next turn.
+  if(state.turns%ENEMY_SPAWN_INTERVAL===0&&spawnAdditionalEnemy()){
+   const arrival=`${enemyType(state.enemies.at(-1)).name}が1体現れました。`;record(arrival);message+=` ${arrival}`;
+  }
+  if(onStairs())message+=" 階段を降りられます。";announce(message);
+ }
+ startMovement(animationStart);render();
+}
+function hitEnemy(enemy){
+ const p=state.player,spec=enemyType(enemy),front=spec.shield&&(p.x-enemy.x)*enemy.facing[0]+(p.y-enemy.y)*enemy.facing[1]>0,damage=spec.shield?Math.ceil(p.attack*(front?spec.frontMultiplier:spec.backMultiplier)):p.attack;
+ enemy.hp=Math.max(0,enemy.hp-damage);state.effect={x:enemy.x,y:enemy.y,kind:"hit"};
+ if(enemy.hp===0){
+  state.enemies=state.enemies.filter(e=>e!==enemy);state.totalKills++;sound.play("kill");
+  scheduleSpirit(enemy);
+  const exp=spec.exp,message=`${enemyName(enemy)}を倒しました！ 経験値${exp}を獲得。`;record(message);
+  const levelUp=gainExperience(exp);return levelUp?`${message} ${levelUp}`:message;
+ }
+ if(enemy.asleep)enemy.wakePending=true;
+ sound.play("hit");enemy.lastSeen={x:p.x,y:p.y};enemy.mode=enemy.asleep?"sleep":"chase";record(`${enemyName(enemy)}に${damage}ダメージ。残りHP ${enemy.hp}。`);
+ const split=splitEnemy(enemy);if(split)record(`${enemyName(enemy)}が分裂し、同じLvの通常個体が1体現れました。`);
+ return `${enemyName(enemy)}に${damage}ダメージ。${spec.shield?(front?" 正面の盾で軽減されました。":" 弱点を突いて2倍ダメージ！"):""}${split?` ${enemyName(enemy)}が1体増えました。`:""}`;
+}
+function move(dx,dy,faceOnly=false,animationStart=performance.now()){
+ if(inventoryMenu.open||state.dead||movement)return false;const p=state.player;p.facing=[dx,dy];if(faceOnly){render();announce("向きを変えました。ターンは進みません。");return true;}
+ if(!terrainStep(p.x,p.y,dx,dy)){sound.play("blocked");announce("壁があります。別の方向へ進みましょう。");render();return false;}
+ const enemy=enemyAt(p.x+dx,p.y+dy);
+ if(enemy){sound.play("blocked");announce("敵がいます。向きを変えました。「攻撃」ボタンで攻撃できます。");render();return false;}
+ beginMovement();state.effect=null;state.shots=[];p.x+=dx;p.y+=dy;recordStep(p);state.moves++;sound.play("step");const pickup=collectHerbAtPlayer();finishTurn(pickup||"階段を探して進みましょう。",animationStart);return true;
+}
+function attack(){
+ stopHold();
+ if(inventoryMenu.open||state.dead||movement)return false;beginMovement();state.effect=null;state.shots=[];const p=state.player,[dx,dy]=p.facing,enemy=terrainStep(p.x,p.y,dx,dy)?enemyAt(p.x+dx,p.y+dy):null;
+ sound.play("attack");finishTurn(enemy?hitEnemy(enemy):"攻撃を空振りしました。");return true;
+}
+function waitTurn(){stopHold();if(inventoryMenu.open||state.dead||movement)return false;beginMovement();state.effect=null;state.shots=[];finishTurn("足踏みして1ターン待ちました。");return true;}
+function stopHold(){clearTimeout(heldTimer);heldTimer=null;heldInput=null;}
+function performHeldStep(animationStart=performance.now()){
+ if(inventoryMenu.open||!heldInput||state.dead||movement||(!heldInput.pending&&!heldInput.repeating))return false;
+ const input=heldInput;input.pending=false;
+ if(!move(...input.direction,false,animationStart)){stopHold();return false;}
+ return true;
+}
+function startHold(input){
+ stopHold();if(inventoryMenu.open||state.dead)return;
+ heldInput={...input,pending:true,repeating:false};const current=heldInput;
+ heldTimer=setTimeout(()=>{
+  heldTimer=null;if(inventoryMenu.open||heldInput!==current||state.dead)return;
+  current.repeating=true;if(!movement)performHeldStep();
+ },HOLD_DELAY);
+ if(!movement)performHeldStep();
+}
+function fresh(carry=null){
+ closeInventoryMenu(false,false);stopHold();cancelMovement();const a=new Uint32Array(1);crypto.getRandomValues(a);state=generate(a[0]);gameRandom=rng(a[0]^0xA53C91E7);
+ Object.assign(state,{enemies:[],remains:[],items:[],inventory:carry?.inventory?.slice()??[],nextItemId:1,nextEnemyId:1,visible:new Uint8Array(W*H),turns:0,totalTurns:carry?.totalTurns??0,totalKills:carry?.totalKills??0,healRemainder:carry?.healRemainder??0,dead:false,effect:null,shots:[],log:[]});
+ const level=carry?.level??1,maxHp=PLAYER_MAX_HP+LEVEL_GROWTH.maxHp*(level-1),attack=PLAYER_ATTACK+LEVEL_GROWTH.attack*(level-1);
+ Object.assign(state.player,{level,exp:carry?.exp??0,maxHp,attack,hp:Math.min(maxHp,carry?.hp??maxHp),facing:[0,1],poisonTurns:carry?.poisonTurns??0,poisonDamage:carry?.poisonDamage??1,poisonAppliedAt:carry?.poisonAppliedAt??-1});
+ sound.setScene(true);spawnEnemies();spawnHerbs();record(`${floorNumber}階に到着。敵を避けるか、戦うか。`);announce("薬草は床で拾い、持ち物メニューで薬草を選んで飲むと、HPを20回復できます。");render();
+}
+function restart(){floorNumber=1;fresh();}
+function descend(){if(inventoryMenu.open||state.dead||movement||!onStairs())return;const carry={hp:state.player.hp,level:state.player.level,exp:state.player.exp,poisonTurns:state.player.poisonTurns,poisonDamage:state.player.poisonDamage,poisonAppliedAt:state.player.poisonAppliedAt,totalTurns:state.totalTurns,totalKills:state.totalKills,healRemainder:state.healRemainder,inventory:state.inventory};floorNumber++;fresh(carry);sound.play("stairs");announce(`${floorNumber}階に到着。HP・レベル・経験値・持ち物を引き継いで探索を続けます。`);}
+const keys={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0],w:[0,-1],s:[0,1],a:[-1,0],d:[1,0],q:[-1,-1],e:[1,-1],z:[-1,1],c:[1,1],"8":[0,-1],"2":[0,1],"4":[-1,0],"6":[1,0],"7":[-1,-1],"9":[1,-1],"1":[-1,1],"3":[1,1]};
+let lastKey=0;document.addEventListener("keydown",e=>{
+ if(inventoryMenu.open){handleInventoryKey(e);return;}
+ if(e.target instanceof HTMLElement&&e.target.closest(".audio-controls"))return;
+ if(e.key==="Shift"){stopHold();return;}
+ if(e.target instanceof HTMLElement&&e.target.closest("button")&&(e.key==="Enter"||e.key===" ")){
+  if(e.repeat&&e.target.closest("button")===$("openInventory"))e.preventDefault();return;
+ }
+ const key=e.key.length===1?e.key.toLowerCase():e.key,handled=keys[key]||[" ",".","5","Enter","i"].includes(key);if(!handled)return;e.preventDefault();
+ if(state.dead)return;
+ if(key==="i"){if(!e.repeat)openInventoryMenu();return;}
+ if(keys[key]){
+  if(e.repeat)return;
+  if(e.shiftKey){stopHold();move(...keys[key],true);}
+  else startHold({source:"keyboard",owner:key,direction:keys[key]});
+ }else{
+  stopHold();const now=performance.now();if(e.repeat&&now-lastKey<130)return;lastKey=now;
+  if(key==="Enter"){if(!e.repeat)descend();}else waitTurn();
+ }
+});
+document.addEventListener("keyup",e=>{
+ const key=e.key.length===1?e.key.toLowerCase():e.key;
+ if(heldInput?.source==="keyboard"&&heldInput.owner===key)stopHold();
+});
+document.querySelectorAll(".pad button[data-dx]").forEach(b=>{
+ const step=()=>move(Number(b.dataset.dx),Number(b.dataset.dy));
+ b.addEventListener("pointerdown",e=>{if(e.button!==0||state.dead||inventoryMenu.open)return;e.preventDefault();b.setPointerCapture(e.pointerId);startHold({source:"pointer",owner:b,pointerId:e.pointerId,direction:[Number(b.dataset.dx),Number(b.dataset.dy)]});});
+ const release=e=>{if(heldInput?.source==="pointer"&&heldInput.owner===b&&heldInput.pointerId===e.pointerId)stopHold();};
+ b.addEventListener("click",e=>{if(e.detail===0){stopHold();step();}});b.addEventListener("pointerup",release);b.addEventListener("pointercancel",release);b.addEventListener("lostpointercapture",release);
+});
+window.addEventListener("blur",stopHold);document.addEventListener("visibilitychange",()=>{if(document.hidden)stopHold();});
+$("openInventory").addEventListener("click",openInventoryMenu);$("menuClose").addEventListener("click",()=>closeInventoryMenu());$("menuBack").addEventListener("click",backInventoryMenu);
+$("menuFoot").addEventListener("click",()=>selectInventoryItem(state.inventory.length));
+$("drinkHerb").addEventListener("click",()=>performInventoryAction("drink"));$("pickUpHerb").addEventListener("click",()=>performInventoryAction("pickup"));$("putDownHerb").addEventListener("click",()=>performInventoryAction("drop"));
+$("inventoryMenu").addEventListener("cancel",e=>{e.preventDefault();backInventoryMenu();});
+$("inventoryMenu").addEventListener("click",e=>{if(e.target===$("inventoryMenu"))backInventoryMenu();});
+$("attack").addEventListener("click",attack);$("wait").addEventListener("click",waitTurn);$("descend").addEventListener("click",descend);$("restart").addEventListener("click",restart);$("regenerate").addEventListener("click",restart);$("mapToggle").addEventListener("click",()=>{wholeMap=!wholeMap;sound.play("confirm");render();});bindSound();fresh();void sound.unlock();
+
+</script></body></html>

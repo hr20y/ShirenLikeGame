@@ -1,0 +1,29 @@
+# Windows / editors
+.vs/
+.idea/
+Thumbs.db
+Desktop.ini
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# .NET / MonoGame build output
+**/bin/
+**/obj/
+artifacts/
+TestResults/
+
+# Local caches and packages
+node_modules/
+__pycache__/
+*.pyc
+
+# Local credentials / environment settings
+.env
+.env.*
+!.env.example
+
+# Temporary files
+*.tmp
+*.log
